@@ -6,25 +6,31 @@ import jakarta.persistence.PersistenceContext;
 import isp.entity.User;
 
 @Stateless
-public class UserEAO {
+public class UserEAOImpl implements UserEAOLocal {
 
     @PersistenceContext(unitName = "BranchbudsEJBProject")
     private EntityManager em;
 
-    public void createUser(User user) {
-        em.persist(user);
+    public UserEAOImpl() {
+        // Default constructor as shown on page 10
     }
 
     public User findUser(int id) {
         return em.find(User.class, id);
     }
 
+    public User createUser(User user) {
+        em.persist(user);
+        return user; 
+    }
+
     public User updateUser(User user) {
-        return em.merge(user);
+        em.merge(user);
+        return user;
     }
 
     public void deleteUser(int id) {
-        User user = findUser(id);
+        User user = this.findUser(id);
         if (user != null) {
             em.remove(user);
         }
