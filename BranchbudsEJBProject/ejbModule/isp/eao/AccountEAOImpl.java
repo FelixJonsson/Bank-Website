@@ -1,6 +1,10 @@
 package isp.eao;
 
 import jakarta.ejb.Stateless;
+import java.util.List;
+
+import jakarta.persistence.TypedQuery;
+import isp.entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import isp.entity.Account;
@@ -34,4 +38,20 @@ public class AccountEAOImpl implements AccountEAOLocal {
             em.remove(account);
         }
     }
+    public Account findAccountByUser(User user) {
+        TypedQuery<Account> query =
+            em.createNamedQuery("Account.findByUser", Account.class);
+
+        query.setParameter("user", user);
+
+        List<Account> results = query.getResultList();
+
+        if (results.isEmpty()) {
+            return null;
+        }
+
+        return results.get(0);
+    }
+  
+
 }
