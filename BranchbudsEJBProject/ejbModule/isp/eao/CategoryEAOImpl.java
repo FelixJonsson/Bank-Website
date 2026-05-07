@@ -3,7 +3,12 @@ package isp.eao;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import isp.entity.Category;
+import java.util.List;
+
+
+
 
 @Stateless
 public class CategoryEAOImpl implements CategoryEAOLocal {
@@ -34,4 +39,13 @@ public class CategoryEAOImpl implements CategoryEAOLocal {
             em.remove(category);
         }
     }
+    
+    public List<Category> findAllCategories() {
+        TypedQuery<Category> query =
+            em.createNamedQuery("Category.findAll", Category.class);
+
+        List<Category> results = query.getResultList();
+        return results;
+    }
+
 }
