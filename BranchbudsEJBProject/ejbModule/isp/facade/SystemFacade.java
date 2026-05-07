@@ -93,6 +93,21 @@ public class SystemFacade implements SystemFacadeLocal {
         return createdTransaction;
 
     }
+    
+    public void deleteTransactionForCurrentUser(int transactionId) {
+        Transaction transaction = transactionEAO.findTransaction(transactionId);
+
+        if (transaction == null || transaction.getAccount() == null) {
+            return;
+        }
+
+        Account account = transaction.getAccount();
+        account.setCurrentBalance(account.getCurrentBalance().subtract(transaction.getAmount()));
+        accountEAO.updateAccount(account);
+
+        transactionEAO.deleteTransaction(transactionId);
+    }
+
 
 
 
