@@ -1,20 +1,20 @@
 package isp.facade;
 
-import jakarta.ejb.Stateless;
-import java.util.List;
-import java.util.ArrayList;
-import jakarta.ejb.EJB;
-import isp.eao.TransactionEAOLocal;
-import isp.entity.Account;
-import isp.entity.Transaction;
-import isp.eao.CategoryEAOLocal;
-import isp.entity.Category;
-import isp.eao.AccountEAOLocal;
-import isp.entity.User;
-import isp.eao.UserEAOLocal;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import isp.eao.AccountEAOLocal;
+import isp.eao.CategoryEAOLocal;
+import isp.eao.TransactionEAOLocal;
+import isp.eao.UserEAOLocal;
+import isp.entity.Account;
+import isp.entity.Category;
+import isp.entity.Transaction;
+import isp.entity.User;
 
 
 
@@ -25,10 +25,13 @@ public class SystemFacade implements SystemFacadeLocal {
 	
 	@EJB
 	private TransactionEAOLocal transactionEAO; 
+	
 	@EJB
 	private CategoryEAOLocal categoryEAO;
+	
 	@EJB
 	private AccountEAOLocal accountEAO;
+	
 	@EJB
 	private UserEAOLocal userEAO;
 
@@ -83,7 +86,7 @@ public class SystemFacade implements SystemFacadeLocal {
             return null;
         }
 
-        // updates balance
+        // Apply the transaction amount to the account balance after the transaction is saved.
         Transaction transaction = new Transaction(account, category, transactionDate, amount, note, repeatingTransaction);
         Transaction createdTransaction = transactionEAO.createTransaction(transaction);
 
@@ -109,7 +112,8 @@ public class SystemFacade implements SystemFacadeLocal {
         transactionEAO.deleteTransaction(transactionId);
     }
 
-    // updates a transaction and adjusts the account balance accordingly
+    // Updates a transaction and adjusts the account balance by the difference between old and new amount.
+
     public Transaction updateTransactionForCurrentUser(int transactionId, int categoryId,
             Timestamp transactionDate, BigDecimal amount, String note, boolean repeatingTransaction) {
 
