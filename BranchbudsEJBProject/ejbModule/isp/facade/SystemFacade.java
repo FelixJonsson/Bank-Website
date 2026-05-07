@@ -95,7 +95,8 @@ public class SystemFacade implements SystemFacadeLocal {
     }
     
     public void deleteTransactionForCurrentUser(int transactionId) {
-        Transaction transaction = transactionEAO.findTransaction(transactionId);
+    	Transaction transaction = this.findTransactionForCurrentUser(transactionId);
+
 
         if (transaction == null || transaction.getAccount() == null) {
             return;
@@ -112,7 +113,7 @@ public class SystemFacade implements SystemFacadeLocal {
     public Transaction updateTransactionForCurrentUser(int transactionId, int categoryId,
             Timestamp transactionDate, BigDecimal amount, String note, boolean repeatingTransaction) {
 
-        Transaction transaction = transactionEAO.findTransaction(transactionId);
+    	Transaction transaction = this.findTransactionForCurrentUser(transactionId);
         Category category = categoryEAO.findCategory(categoryId);
 
         if (transaction == null || transaction.getAccount() == null || category == null) {
