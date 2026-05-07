@@ -83,9 +83,73 @@ public class SystemFacade implements SystemFacadeLocal {
             return null;
         }
 
+        // updates balance
         Transaction transaction = new Transaction(account, category, transactionDate, amount, note, repeatingTransaction);
-        return transactionEAO.createTransaction(transaction);
+        Transaction createdTransaction = transactionEAO.createTransaction(transaction);
+
+        account.setCurrentBalance(account.getCurrentBalance().add(amount));
+        accountEAO.updateAccount(account);
+
+        return createdTransaction;
+
     }
+    
+    public void deleteTransactionForCurrentUser(int transactionId) {
+        Transaction transaction = transactionEAO.findTransaction(transactionId);
+
+        if (transaction == null || transaction.getAccount() == null) {
+            return;
+        }
+
+        Account account = transaction.getAccount();
+        account.setCurrentBalance(account.getCurrentBalance().subtract(transaction.getAmount()));
+        accountEAO.updateAccount(account);
+
+        transactionEAO.deleteTransaction(transactionId);
+    }
+
+    // updates a transaction and adjusts the account balance accordingly
+    public Transaction updateTransactionForCurrentUser(int transactionId, int categoryId,
+            Timestamp transactionDate, BigDecimal amount, String note, boolean repeatingTransaction) {
+
+        Transaction transaction = transactionEAO.findTransaction(transactionId);
+        Category category = categoryEAO.findCategory(categoryId);
+
+        if (transaction == null || transaction.getAccount() == null || category == null) {
+            return null;
+        }
+
+        Account account = transaction.getAccount();
+        BigDecimal oldAmount = transaction.getAmount();
+
+        transaction.setCategory(category);
+        transaction.setTransactionDate(transactionDate);
+        transaction.setAmount(amount);
+        transaction.setNote(note);
+        transaction.setRepeatingTransaction(repeatingTransaction);
+
+        BigDecimal difference = amount.subtract(oldAmount);
+        account.setCurrentBalance(account.getCurrentBalance().add(difference));
+        accountEAO.updateAccount(account);
+
+        return transactionEAO.updateTransaction(transaction);
+    }
+
+    public Transaction findTransactionForCurrentUser(int transactionId) {
+        Transaction transaction = transactionEAO.findTransaction(transactionId);
+        Account account = this.findCurrentUserAccount();
+
+        if (transaction == null || account == null || transaction.getAccount() == null) {
+            return null;
+        }
+
+        if (transaction.getAccount().getAccountId() != account.getAccountId()) {
+            return null;
+        }
+
+        return transaction;
+    }
+
 
 
 
