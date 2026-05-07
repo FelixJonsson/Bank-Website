@@ -24,5 +24,7 @@ public interface SystemFacadeLocal {
 	public Transaction createTransactionForCurrentUser(int categoryId, Timestamp transactionDate,
 	        BigDecimal amount, String note, boolean repeatingTransaction);
 	public void deleteTransactionForCurrentUser(int transactionId);
+	public Transaction updateTransactionForCurrentUser(int transactionId, int categoryId,
+	        Timestamp transactionDate, BigDecimal amount, String note, boolean repeatingTransaction);
 
 }

@@ -108,6 +108,33 @@ public class SystemFacade implements SystemFacadeLocal {
         transactionEAO.deleteTransaction(transactionId);
     }
 
+    // updates a transaction and adjusts the account balance accordingly
+    public Transaction updateTransactionForCurrentUser(int transactionId, int categoryId,
+            Timestamp transactionDate, BigDecimal amount, String note, boolean repeatingTransaction) {
+
+        Transaction transaction = transactionEAO.findTransaction(transactionId);
+        Category category = categoryEAO.findCategory(categoryId);
+
+        if (transaction == null || transaction.getAccount() == null || category == null) {
+            return null;
+        }
+
+        Account account = transaction.getAccount();
+        BigDecimal oldAmount = transaction.getAmount();
+
+        transaction.setCategory(category);
+        transaction.setTransactionDate(transactionDate);
+        transaction.setAmount(amount);
+        transaction.setNote(note);
+        transaction.setRepeatingTransaction(repeatingTransaction);
+
+        BigDecimal difference = amount.subtract(oldAmount);
+        account.setCurrentBalance(account.getCurrentBalance().add(difference));
+        accountEAO.updateAccount(account);
+
+        return transactionEAO.updateTransaction(transaction);
+    }
+
 
 
 
