@@ -83,8 +83,15 @@ public class SystemFacade implements SystemFacadeLocal {
             return null;
         }
 
+        // updates balance
         Transaction transaction = new Transaction(account, category, transactionDate, amount, note, repeatingTransaction);
-        return transactionEAO.createTransaction(transaction);
+        Transaction createdTransaction = transactionEAO.createTransaction(transaction);
+
+        account.setCurrentBalance(account.getCurrentBalance().add(amount));
+        accountEAO.updateAccount(account);
+
+        return createdTransaction;
+
     }
 
 
