@@ -2,12 +2,23 @@ package isp.entity;
 
 import java.io.Serializable;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+
 
 @Entity
+@NamedQueries({
+    @NamedQuery(
+        name = "Category.findAll",
+        query = "SELECT c FROM Category c ORDER BY c.categoryName"
+    )
+})
+
 @Table(name = "Category")
 public class Category implements Serializable {
 
