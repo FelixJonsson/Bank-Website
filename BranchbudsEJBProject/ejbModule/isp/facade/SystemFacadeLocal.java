@@ -2,7 +2,6 @@ package isp.facade;
 
 import jakarta.ejb.Local;
 import java.util.List;
-
 import isp.entity.Account;
 import isp.entity.Transaction;
 import isp.entity.Category;
@@ -19,6 +18,7 @@ public interface SystemFacadeLocal {
 	public Account findAccountByUser(User user);
 	public User findCurrentUser();
 	public Account findCurrentUserAccount();
+	public List<Transaction> findTransactionsForCurrentUser();
 
 
 }

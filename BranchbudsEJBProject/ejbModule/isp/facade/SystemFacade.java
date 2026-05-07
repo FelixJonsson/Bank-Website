@@ -2,7 +2,7 @@ package isp.facade;
 
 import jakarta.ejb.Stateless;
 import java.util.List;
-
+import java.util.ArrayList;
 import jakarta.ejb.EJB;
 import isp.eao.TransactionEAOLocal;
 import isp.entity.Account;
@@ -59,6 +59,15 @@ public class SystemFacade implements SystemFacadeLocal {
         return accountEAO.findAccountByUser(user);
     }
 
+    public List<Transaction> findTransactionsForCurrentUser() {
+        Account account = this.findCurrentUserAccount();
+
+        if (account == null) {
+            return new ArrayList<Transaction>();
+        }
+
+        return transactionEAO.findTransactionsByAccount(account);
+    }
 
 
 
