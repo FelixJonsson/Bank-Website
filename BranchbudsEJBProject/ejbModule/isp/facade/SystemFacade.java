@@ -11,12 +11,13 @@ import isp.eao.CategoryEAOLocal;
 import isp.entity.Category;
 import isp.eao.AccountEAOLocal;
 import isp.entity.User;
-
-
+import isp.eao.UserEAOLocal;
 
 
 @Stateless
 public class SystemFacade implements SystemFacadeLocal {
+	
+	private static final int CURRENT_USER_ID = 1; // user with ID 1 is the current user for demonstration purposes
 	
 	@EJB
 	private TransactionEAOLocal transactionEAO; 
@@ -24,6 +25,9 @@ public class SystemFacade implements SystemFacadeLocal {
 	private CategoryEAOLocal categoryEAO;
 	@EJB
 	private AccountEAOLocal accountEAO;
+	@EJB
+	private UserEAOLocal userEAO;
+
 	
 
     public SystemFacade() {
@@ -40,6 +44,21 @@ public class SystemFacade implements SystemFacadeLocal {
     public Account findAccountByUser(User user) {
         return accountEAO.findAccountByUser(user);
     }
+    
+    public User findCurrentUser() {
+        return userEAO.findUser(CURRENT_USER_ID);
+    }
+
+    public Account findCurrentUserAccount() {
+        User user = this.findCurrentUser();
+
+        if (user == null) {
+            return null;
+        }
+
+        return accountEAO.findAccountByUser(user);
+    }
+
 
 
 
