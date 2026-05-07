@@ -135,6 +135,21 @@ public class SystemFacade implements SystemFacadeLocal {
         return transactionEAO.updateTransaction(transaction);
     }
 
+    public Transaction findTransactionForCurrentUser(int transactionId) {
+        Transaction transaction = transactionEAO.findTransaction(transactionId);
+        Account account = this.findCurrentUserAccount();
+
+        if (transaction == null || account == null || transaction.getAccount() == null) {
+            return null;
+        }
+
+        if (transaction.getAccount().getAccountId() != account.getAccountId()) {
+            return null;
+        }
+
+        return transaction;
+    }
+
 
 
 
