@@ -12,6 +12,10 @@ import isp.entity.Category;
 import isp.eao.AccountEAOLocal;
 import isp.entity.User;
 import isp.eao.UserEAOLocal;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+
+
 
 
 @Stateless
@@ -67,6 +71,20 @@ public class SystemFacade implements SystemFacadeLocal {
         }
 
         return transactionEAO.findTransactionsByAccount(account);
+    }
+
+    public Transaction createTransactionForCurrentUser(int categoryId, Timestamp transactionDate,
+            BigDecimal amount, String note, boolean repeatingTransaction) {
+
+        Account account = this.findCurrentUserAccount();
+        Category category = categoryEAO.findCategory(categoryId);
+
+        if (account == null || category == null) {
+            return null;
+        }
+
+        Transaction transaction = new Transaction(account, category, transactionDate, amount, note, repeatingTransaction);
+        return transactionEAO.createTransaction(transaction);
     }
 
 
