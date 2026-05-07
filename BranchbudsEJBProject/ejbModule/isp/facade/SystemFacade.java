@@ -9,6 +9,9 @@ import isp.entity.Account;
 import isp.entity.Transaction;
 import isp.eao.CategoryEAOLocal;
 import isp.entity.Category;
+import isp.eao.AccountEAOLocal;
+import isp.entity.User;
+
 
 
 
@@ -19,6 +22,8 @@ public class SystemFacade implements SystemFacadeLocal {
 	private TransactionEAOLocal transactionEAO; 
 	@EJB
 	private CategoryEAOLocal categoryEAO;
+	@EJB
+	private AccountEAOLocal accountEAO;
 	
 
     public SystemFacade() {
@@ -31,6 +36,11 @@ public class SystemFacade implements SystemFacadeLocal {
     public List<Category> findAllCategories() {
         return categoryEAO.findAllCategories();
     }
+    
+    public Account findAccountByUser(User user) {
+        return accountEAO.findAccountByUser(user);
+    }
+
 
 
 }

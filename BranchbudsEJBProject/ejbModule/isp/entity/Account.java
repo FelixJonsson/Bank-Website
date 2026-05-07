@@ -1,6 +1,7 @@
 package isp.entity;
 
 import java.io.Serializable;
+
 import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
@@ -11,8 +12,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+
 
 @Entity
+@NamedQueries({
+    @NamedQuery(
+        name = "Account.findByUser",
+        query = "SELECT a FROM Account a WHERE a.user = :user"
+    )
+})
+
 @Table(name = "Accounts")
 public class Account implements Serializable {
 
