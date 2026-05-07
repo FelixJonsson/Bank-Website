@@ -1,5 +1,10 @@
 package isp.facade;
 
-public class SystemFacade {
+import jakarta.ejb.Stateless;
 
+@Stateless
+public class SystemFacade implements SystemFacadeLocal {
+
+    public SystemFacade() {
+    }
 }

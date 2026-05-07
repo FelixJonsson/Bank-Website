@@ -1,9 +1,13 @@
 package isp.eao;
 
 import jakarta.ejb.Stateless;
+import java.util.List;
+
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import isp.entity.Transaction;
+import isp.entity.Account;
 
 @Stateless
 public class TransactionEAOImpl implements TransactionEAOLocal {
@@ -34,4 +38,15 @@ public class TransactionEAOImpl implements TransactionEAOLocal {
             em.remove(transaction);
         }
     }
+    
+    public List<Transaction> findTransactionsByAccount(Account account) {
+        TypedQuery<Transaction> query =
+            em.createNamedQuery("Transaction.findByAccount", Transaction.class);
+
+        query.setParameter("account", account);
+
+        List<Transaction> results = query.getResultList();
+        return results;
+    }
+
 }
