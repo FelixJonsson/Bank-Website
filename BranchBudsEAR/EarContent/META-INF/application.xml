@@ -10,7 +10,4 @@
       <context-root>BranchBudsWeb</context-root>
     </web>
   </module>
-  <module>
-    <ejb>IS-project.jar</ejb>
-  </module>
 </application>
