@@ -1,8 +1,8 @@
 package isp.eao;
 
 import jakarta.ejb.Local;
-import java.util.List;
 import isp.entity.Account;
+import isp.entity.User;
 
 @Local
 public interface AccountEAOLocal {
@@ -10,5 +10,5 @@ public interface AccountEAOLocal {
     public Account createAccount(Account account);
     public Account updateAccount(Account account);
     public void deleteAccount(int id);
-    public List <Account> getAccountsForUser(int userId);
+    public Account findAccountByUser(User user);
 }

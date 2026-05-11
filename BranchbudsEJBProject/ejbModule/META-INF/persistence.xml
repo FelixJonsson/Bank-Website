@@ -12,5 +12,4 @@
             <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
         </properties>
 
-    </persistence-unit>
 </persistence>
