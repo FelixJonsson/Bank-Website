@@ -8,5 +8,4 @@
         <non-jta-data-source>java:jboss/datasources/ExampleDS</non-jta-data-source>
     </persistence-unit>
 
-    </persistence-unit>
 </persistence>
