@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd" id="Application_ID" version="6">
-  <display-name>BranchBudsEAR</display-name>
-  <module>
-    <ejb>BranchbudsEJBProject.jar</ejb>
-  </module>
-  <module>
-    <web>
-      <web-uri>BranchBudsWeb.war</web-uri>
-      <context-root>BranchBudsWeb</context-root>
-    </web>
-  </module>
+<application xmlns="https://jakarta.ee/xml/ns/jakartaee"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/application_10.xsd"
+             version="10">
+
+    <display-name>BranchBudsEAR</display-name>
+
+    <module>
+        <ejb>BranchbudsEJBProject.jar</ejb>
+    </module>
+    
+    <module>
+        <web>
+            <web-uri>BranchBudsWeb.war</web-uri>
+            <context-root>/BranchBudsWeb</context-root>
+        </web>
+    </module>
+
 </application>
