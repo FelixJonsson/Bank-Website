@@ -8,11 +8,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import isp.entity.Account;
 import java.util.ArrayList;
 import isp.entity.Category;
-
-import isp.facade.SystemFacadeLocal;
+import isp.entity.Transaction;
 import isp.entity.User;
+import isp.facade.SystemFacadeLocal;
 
 @WebServlet("/MainController")
 public class MainController extends HttpServlet {
@@ -22,21 +23,20 @@ public class MainController extends HttpServlet {
     @EJB
     private SystemFacadeLocal systemFacade;
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        
-    	List<User> allUsers = new ArrayList<User>();
-    	User currentUser = systemFacade.findCurrentUser();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    	if (currentUser != null) {
-    	    allUsers.add(currentUser);
-    	}
+        User currentUser = systemFacade.findCurrentUser();
+        Account currentAccount = systemFacade.findCurrentUserAccount();
+        List<Transaction> transactions = systemFacade.findTransactionsForCurrentUser();
+        List<Category> categories = systemFacade.findAllCategories();
 
-    	List<Category> allCategories = systemFacade.findAllCategories();
-
-
-        request.setAttribute("userList", allUsers);
-        request.setAttribute("categoryList", allCategories);
+        request.setAttribute("currentUser", currentUser);
+        request.setAttribute("currentAccount", currentAccount);
+        request.setAttribute("transactions", transactions);
+        request.setAttribute("categories", categories);
 
         request.getRequestDispatcher("/index.jsp").forward(request, response);
     }
+
 }

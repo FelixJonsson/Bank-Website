@@ -13,29 +13,81 @@
 </head>
 <body style="background-color: #f4f7f6;">
 
-    <h1 style="text-align:center;">BranchBuds Systemöversikt</h1>
+    <header>
+        <h1 style="text-align:center;">BranchBuds</h1>
+    </header>
 
-    <div class="dashboard-grid">
-        <div class="card">
-            <h2>Registrerade Användare</h2>
+    <nav style="text-align:center; margin-bottom: 20px;">
+        <a href="${pageContext.request.contextPath}/MainController">Hem</a>
+        |
+        <a href="#">Om</a>
+    </nav>
+
+    <main class="dashboard-grid">
+
+        <section class="card">
+            <h2>Kontoöversikt</h2>
+
+            <c:choose>
+                <c:when test="${currentAccount != null}">
+                    <p><strong>Användare:</strong> ${currentUser.userName}</p>
+                    <p><strong>Konto:</strong> ${currentAccount.accountName}</p>
+                    <p><strong>Saldo:</strong> ${currentAccount.currentBalance} kr</p>
+                </c:when>
+                <c:otherwise>
+                    <p>Inget konto hittades för aktuell användare.</p>
+                </c:otherwise>
+            </c:choose>
+        </section>
+
+        <section class="card">
+            <h2>Tillgängliga kategorier</h2>
+
             <table>
-                <tr><th>Namn</th><th>E-post</th></tr>
-                <c:forEach var="u" items="${userList}">
-                    <tr><td>${u.userName}</td><td>${u.email}</td></tr>
+                <tr>
+                    <th>Namn</th>
+                    <th>Typ</th>
+                </tr>
+
+                <c:forEach var="cat" items="${categories}">
+                    <tr>
+                        <td>${cat.categoryName}</td>
+                        <td>${cat.categoryType}</td>
+                    </tr>
                 </c:forEach>
             </table>
-        </div>
+        </section>
 
-        <div class="card">
-            <h2>Tillgängliga Kategorier</h2>
+        <section class="card" style="grid-column: 1 / -1;">
+            <h2>Transaktioner</h2>
+
             <table>
-                <tr><th>Namn</th><th>Typ</th></tr>
-                <c:forEach var="cat" items="${categoryList}">
-                    <tr><td>${cat.categoryName}</td><td>${cat.categoryType}</td></tr>
+                <tr>
+                    <th>Datum</th>
+                    <th>Kategori</th>
+                    <th>Belopp</th>
+                    <th>Kommentar</th>
+                    <th>Återkommande</th>
+                </tr>
+
+                <c:forEach var="transaction" items="${transactions}">
+                    <tr>
+                        <td>${transaction.transactionDate}</td>
+                        <td>${transaction.category.categoryName}</td>
+                        <td>${transaction.amount}</td>
+                        <td>${transaction.note}</td>
+                        <td>${transaction.repeatingTransaction}</td>
+                    </tr>
                 </c:forEach>
             </table>
-        </div>
-    </div>
+        </section>
+
+    </main>
+
+    <footer style="text-align:center; margin-top: 20px;">
+        <p>BranchBuds</p>
+    </footer>
 
 </body>
+
 </html>
