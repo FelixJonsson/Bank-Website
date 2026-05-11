@@ -16,6 +16,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 
 
+
 @Entity
 @NamedQueries({
     @NamedQuery(
@@ -30,7 +31,7 @@ public class Account implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int accountId;
-    private User user; // Relationship to User
+    private User user; 
     private String accountName;
     private String accountType;
     private BigDecimal currentBalance;
