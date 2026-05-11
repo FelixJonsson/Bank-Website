@@ -2,6 +2,7 @@ package isp.entity;
 
 import java.io.Serializable;
 
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 

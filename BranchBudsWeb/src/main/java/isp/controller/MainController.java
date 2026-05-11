@@ -1,28 +1,30 @@
 package isp.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.List;
+import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet("/MainController") 
+import isp.facade.SystemFacadeLocal;
+import isp.entity.User;
+
+@WebServlet("/MainController")
 public class MainController extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+    @EJB
+    private SystemFacadeLocal systemFacade;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
-                response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        
-        out.println("<!DOCTYPE html>");
-        out.println("<html>");
-        out.println("<head><title>BranchBuds Test</title></head>");
-        out.println("<body>");
-        out.println("<h2 style='color: green;'>Det funkar! MainController är vaken!</h2>");
-        out.println("</body>");
-        out.println("</html>");
+        List<User> allUsers = systemFacade.getAllUsers();
+        List<Category> allCategories = systemFacade.getAllCategories();
+
+        request.setAttribute("userList", allUsers);
+        request.setAttribute("categoryList", allCategories);
+
+        request.getRequestDispatcher("/index.jsp").forward(request, response);
     }
 }

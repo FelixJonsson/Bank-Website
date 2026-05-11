@@ -1,6 +1,7 @@
 package isp.entity;
 
 import java.io.Serializable;
+
 import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
@@ -12,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+
 @Entity
 @Table(name = "Accounts")
 public class Account implements Serializable {
@@ -19,7 +21,7 @@ public class Account implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int accountId;
-    private User user; // Relationship to User
+    private User user; 
     private String accountName;
     private String accountType;
     private BigDecimal currentBalance;

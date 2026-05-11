@@ -2,6 +2,7 @@ package isp.eao;
 
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import isp.entity.User;
 
@@ -33,6 +34,17 @@ public class UserEAOImpl implements UserEAOLocal {
         User user = this.findUser(id);
         if (user != null) {
             em.remove(user);
+        }
+    }
+    
+    public User findUserByEmail(String email) {
+        try {
+            return em.createNamedQuery("User.findByEmail", User.class)
+                     .setParameter("email", email) 
+                     .getSingleResult();
+                     
+        } catch (NoResultException e) {
+            return null; 
         }
     }
 }
