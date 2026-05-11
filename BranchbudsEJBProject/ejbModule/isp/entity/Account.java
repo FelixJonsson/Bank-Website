@@ -12,10 +12,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+
 
 
 @Entity
-@Table(name = "Accounts")
+@NamedQueries({
+    @NamedQuery(
+        name = "Account.findByUser",
+        query = "SELECT a FROM Account a WHERE a.user = :user"
+    )
+})
+
+@Table(name = "Account")
 public class Account implements Serializable {
 
     private static final long serialVersionUID = 1L;

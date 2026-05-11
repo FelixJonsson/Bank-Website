@@ -2,6 +2,9 @@ package isp.eao;
 
 import jakarta.ejb.Stateless;
 import java.util.List;
+
+import jakarta.persistence.TypedQuery;
+import isp.entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import isp.entity.Account;

@@ -37,16 +37,20 @@ public class Transaction implements Serializable {
     private Timestamp transactionDate;
     private BigDecimal amount;
     private String note;
+    private boolean repeatingTransaction;
+    
 
     public Transaction() {
     }
 
-    public Transaction(Account account, Category category, Timestamp transactionDate, BigDecimal amount, String note) {
+    public Transaction(Account account, Category category, Timestamp transactionDate, BigDecimal amount, String note, boolean repeatingTransaction) 
+    {
         this.account = account;
         this.category = category;
         this.transactionDate = transactionDate;
         this.amount = amount;
         this.note = note;
+        this.repeatingTransaction = repeatingTransaction;
     }
 
     @Id
@@ -106,4 +110,13 @@ public class Transaction implements Serializable {
     public void setNote(String note) {
         this.note = note;
     }
+    
+    @Column(name = "RepeatingTransaction")
+    public boolean isRepeatingTransaction() {
+        return repeatingTransaction;
+    }
+    public void setRepeatingTransaction(boolean repeatingTransaction) {
+        this.repeatingTransaction = repeatingTransaction;
+    }
+
 }
