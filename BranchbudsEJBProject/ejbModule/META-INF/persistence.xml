@@ -4,12 +4,11 @@
     xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
 
     <persistence-unit name="BranchbudsEJBProject" transaction-type="JTA">
-        
         <jta-data-source>java:/AzureDS</jta-data-source>
-        
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
             <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
         </properties>
-
+    </persistence-unit>
+    
 </persistence>
