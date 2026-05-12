@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 import jakarta.persistence.Table;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -22,10 +23,14 @@ import jakarta.persistence.NamedQuery;
     @NamedQuery(
         name = "Account.findByUser",
         query = "SELECT a FROM Account a WHERE a.user = :user"
+    ),
+    @NamedQuery(
+        name = "Account.findByUserId",
+        query = "SELECT a FROM Account a WHERE a.user.userId = :userId"
     )
 })
 
-@Table(name = "Account")
+@Table(name = "[Account]", schema = "dbo")
 public class Account implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -76,7 +81,7 @@ public class Account implements Serializable {
         this.accountName = accountName;
     }
 
-    @Column(name = "AccountType")
+    @Transient
     public String getAccountType() {
         return accountType;
     }

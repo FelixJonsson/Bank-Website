@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 import jakarta.persistence.Table;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -23,10 +24,14 @@ import jakarta.persistence.NamedQuery;
     @NamedQuery(
         name = "Transaction.findByAccount",
         query = "SELECT t FROM Transaction t WHERE t.account = :account ORDER BY t.transactionDate DESC"
+    ),
+    @NamedQuery(
+        name = "Transaction.findByUserId",
+        query = "SELECT t FROM Transaction t WHERE t.account.user.userId = :userId ORDER BY t.transactionDate DESC"
     )
 })
 
-@Table(name = "Transaction")
+@Table(name = "[Transaction]", schema = "dbo")
 public class Transaction implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -111,7 +116,7 @@ public class Transaction implements Serializable {
         this.note = note;
     }
     
-    @Column(name = "RepeatingTransaction")
+    @Transient
     public boolean isRepeatingTransaction() {
         return repeatingTransaction;
     }

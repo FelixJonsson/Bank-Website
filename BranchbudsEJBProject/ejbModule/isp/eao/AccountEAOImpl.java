@@ -54,4 +54,19 @@ public class AccountEAOImpl implements AccountEAOLocal {
         return results.get(0);
     }
 
+    public Account findAccountByUserId(int userId) {
+        TypedQuery<Account> query =
+            em.createNamedQuery("Account.findByUserId", Account.class);
+
+        query.setParameter("userId", userId);
+
+        List<Account> results = query.getResultList();
+
+        if (results.isEmpty()) {
+            return null;
+        }
+
+        return results.get(0);
+    }
+
 }
