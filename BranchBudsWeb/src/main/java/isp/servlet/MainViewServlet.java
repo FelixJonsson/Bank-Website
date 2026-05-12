@@ -1,6 +1,7 @@
 package isp.servlet;
 
 import java.io.IOException;
+
 import java.util.List;
 
 import jakarta.ejb.EJB;
@@ -29,13 +30,18 @@ public class MainViewServlet extends HttpServlet {
 		Account currentAccount = systemFacade.findCurrentUserAccount();
 		List<Transaction> transactions = systemFacade.findTransactionsForCurrentUser();
 		List<Category> categories = systemFacade.findAllCategories();
+		List<User> allUsers = systemFacade.getAllUsers();
 
 		request.setAttribute("viewLoaded", Boolean.TRUE);
 		request.setAttribute("currentUser", currentUser);
 		request.setAttribute("currentAccount", currentAccount);
 		request.setAttribute("transactions", transactions);
 		request.setAttribute("categories", categories);
+		
+		request.setAttribute("userList", allUsers);
 
 		request.getRequestDispatcher("/index.jsp").forward(request, response);
 	}
+	
+	
 }

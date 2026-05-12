@@ -27,5 +27,6 @@ public interface SystemFacadeLocal {
 	public Transaction updateTransactionForCurrentUser(int transactionId, int categoryId,
 	        Timestamp transactionDate, BigDecimal amount, String note, boolean repeatingTransaction);
 	public Transaction findTransactionForCurrentUser(int transactionId);
+	public List<User> getAllUsers();
 
 }
