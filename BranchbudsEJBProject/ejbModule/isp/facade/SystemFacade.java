@@ -154,7 +154,10 @@ public class SystemFacade implements SystemFacadeLocal {
 
         return transaction;
     }
-
+    
+    public List<User> getAllUsers() {
+        return userEAO.getAllUsers();
+    }
 
 
 

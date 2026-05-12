@@ -24,6 +24,20 @@
     </nav>
 
     <main class="dashboard-grid">
+		    <form action="NastaServlet" method="POST">
+		    <label for="userDropdown">Välj användare:</label>
+		    
+		    <select name="selectedUserId" id="userDropdown">
+		        <option value="">-- Välj en användare --</option>
+		        
+		        <c:forEach items="${userList}" var="user">
+		            <option value="${user.userId}">${user.userName}</option>
+		        </c:forEach>
+		        
+		    </select>
+		    
+		    <button type="submit">Välj</button>
+		</form>
 
         <section class="card">
             <h2>Kontoöversikt</h2>
