@@ -103,8 +103,8 @@ public class Transaction implements Serializable {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setAmount(BigDecimal bigDecimal) {
+        this.amount = bigDecimal;
     }
 
     @Column(name = "Note")
@@ -123,5 +123,6 @@ public class Transaction implements Serializable {
     public void setRepeatingTransaction(boolean repeatingTransaction) {
         this.repeatingTransaction = repeatingTransaction;
     }
+    
 
 }

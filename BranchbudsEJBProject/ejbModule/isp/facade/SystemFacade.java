@@ -128,7 +128,7 @@ public class SystemFacade implements SystemFacadeLocal {
 
         transaction.setCategory(category);
         transaction.setTransactionDate(transactionDate);
-        transaction.setAmount(amount);
+        transaction.setAmount(BigDecimal.valueOf(amount.doubleValue()));
         transaction.setNote(note);
         transaction.setRepeatingTransaction(repeatingTransaction);
 
@@ -158,6 +158,15 @@ public class SystemFacade implements SystemFacadeLocal {
         return userEAO.getAllUsers();
     }
 
-
+    public void updateTransaction(int transactionId, String newDesc, double newAmount, int newCategoryId) {
+        Transaction t = transactionEAO.findById(transactionId);
+        
+        Category c = categoryEAO.findById(newCategoryId);
+        
+        t.setAmount(newAmount);
+        t.setCategory(c);
+        
+        transactionEAO.update(t);
+    }
 
 }

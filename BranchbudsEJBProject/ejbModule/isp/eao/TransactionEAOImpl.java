@@ -58,4 +58,8 @@ public class TransactionEAOImpl implements TransactionEAOLocal {
         return query.getResultList();
     }
 
+	public Transaction findById(int transactionId) {
+		return em.find(Transaction.class, transactionId);
+	}
+
 }

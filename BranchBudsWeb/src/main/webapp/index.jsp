@@ -172,7 +172,7 @@
             <h1>BranchBuds</h1>
             <p>Översikt över användare, konton och transaktioner</p>
         </div>
-        <nav class="nav-links">
+   		<nav class="nav-links">
             <a href="${pageContext.request.contextPath}/MainViewServlet">Hem</a>
             <a href="#">Om</a>
         </nav>
@@ -231,23 +231,35 @@
             </c:choose>
         </section>
 
-        <section class="panel">
-            <h2>Tillgängliga kategorier</h2>
-
-            <table>
-                <tr>
-                    <th>Namn</th>
-                    <th>Typ</th>
-                </tr>
-
-                <c:forEach var="cat" items="${categories}">
-                    <tr>
-                        <td>${cat.categoryName}</td>
-                        <td>${cat.categoryType}</td>
-                    </tr>
-                </c:forEach>
-            </table>
-        </section>
+			<section class="panel">
+			    <h2>Redigera transaktion</h2>
+			
+			    <form action="${pageContext.request.contextPath}/EditTransactionServlet" method="POST">
+			        
+			        <input type="hidden" name="transactionId" value="${transactionToEdit.id}">
+			
+			        <label for="desc">Beskrivning:</label>
+			        <input type="text" id="desc" name="description" value="${transactionToEdit.description}" required>
+			        <br><br>
+			
+			        <label for="amount">Belopp:</label>
+			        <input type="number" id="amount" name="amount" value="${transactionToEdit.amount}" step="0.01" required>
+			        <br><br>
+			
+			        <label for="category">Kategori:</label>
+			        <select id="category" name="categoryId" required>
+			            <option value="">-- Välj en kategori --</option>
+			            <c:forEach var="cat" items="${categories}">
+			                <option value="${cat.categoryId}" ${cat.categoryId == transactionToEdit.category.categoryId ? 'selected' : ''}>
+			                    ${cat.categoryName} (${cat.categoryType})
+			                </option>
+			            </c:forEach>
+			        </select>
+			        <br><br>
+			
+			        <button type="submit">Spara ändringar</button>
+			    </form>
+			</section>
 
         <section class="panel panel-wide">
             <h2>Transaktioner</h2>
@@ -278,7 +290,7 @@
     </main>
 
     <footer>
-        <p>BranchBuds</p>
+        <p></p>
     </footer>
     </div>
 </body>
