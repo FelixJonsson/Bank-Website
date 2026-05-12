@@ -11,4 +11,5 @@ public interface AccountEAOLocal {
     public Account updateAccount(Account account);
     public void deleteAccount(int id);
     public Account findAccountByUser(User user);
+    public Account findAccountByUserId(int userId);
 }

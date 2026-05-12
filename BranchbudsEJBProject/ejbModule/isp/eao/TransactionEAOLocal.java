@@ -12,5 +12,6 @@ public interface TransactionEAOLocal {
     public Transaction updateTransaction(Transaction transaction);
     public void deleteTransaction(int id);
     public List<Transaction> findTransactionsByAccount(Account account);
+    public List<Transaction> findTransactionsByUserId(int userId);
 
 }

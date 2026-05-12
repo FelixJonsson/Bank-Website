@@ -2,7 +2,6 @@ package isp.facade;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.ejb.EJB;
@@ -57,47 +56,23 @@ public class SystemFacade implements SystemFacadeLocal {
     }
 
     public Account findAccountForUser(int userId) {
-        User user = this.findUser(userId);
-
-        if (user == null) {
-            return null;
-        }
-
-        return accountEAO.findAccountByUser(user);
+        return accountEAO.findAccountByUserId(userId);
     }
 
     public List<Transaction> findTransactionsForUser(int userId) {
-        Account account = this.findAccountForUser(userId);
-
-        if (account == null) {
-            return new ArrayList<Transaction>();
-        }
-
-        return transactionEAO.findTransactionsByAccount(account);
+        return transactionEAO.findTransactionsByUserId(userId);
     }
     
     public User findCurrentUser() {
-        return userEAO.findUser(CURRENT_USER_ID);
+        return this.findUser(CURRENT_USER_ID);
     }
 
     public Account findCurrentUserAccount() {
-        User user = this.findCurrentUser();
-
-        if (user == null) {
-            return null;
-        }
-
-        return accountEAO.findAccountByUser(user);
+        return this.findAccountForUser(CURRENT_USER_ID);
     }
 
     public List<Transaction> findTransactionsForCurrentUser() {
-        Account account = this.findCurrentUserAccount();
-
-        if (account == null) {
-            return new ArrayList<Transaction>();
-        }
-
-        return transactionEAO.findTransactionsByAccount(account);
+        return this.findTransactionsForUser(CURRENT_USER_ID);
     }
 
     public Transaction createTransactionForCurrentUser(int categoryId, Timestamp transactionDate,

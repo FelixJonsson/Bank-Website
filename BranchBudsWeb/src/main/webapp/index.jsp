@@ -27,7 +27,7 @@
 		    <form action="${pageContext.request.contextPath}/MainViewServlet" method="GET">
 		    <label for="userDropdown">Välj användare:</label>
 		    
-		    <select name="selectedUserId" id="userDropdown">
+		    <select name="selectedUserId" id="userDropdown" onchange="this.form.submit()">
 		        <option value="">-- Välj en användare --</option>
 		        
 		        <c:forEach items="${userList}" var="user">
@@ -42,16 +42,17 @@
 		        </c:forEach>
 		        
 		    </select>
-		    
-		    <button type="submit">Välj</button>
 		</form>
 
         <section class="card">
             <h2>Kontoöversikt</h2>
 
+            <c:if test="${currentUser != null}">
+                <p><strong>Användare:</strong> ${currentUser.userName}</p>
+            </c:if>
+
             <c:choose>
                 <c:when test="${currentAccount != null}">
-                    <p><strong>Användare:</strong> ${currentUser.userName}</p>
                     <p><strong>Konto:</strong> ${currentAccount.accountName}</p>
                     <p><strong>Saldo:</strong> ${currentAccount.currentBalance} kr</p>
                 </c:when>
@@ -88,7 +89,6 @@
                     <th>Kategori</th>
                     <th>Belopp</th>
                     <th>Kommentar</th>
-                    <th>Återkommande</th>
                 </tr>
 
                 <c:forEach var="transaction" items="${transactions}">
@@ -97,10 +97,13 @@
                         <td>${transaction.category.categoryName}</td>
                         <td>${transaction.amount}</td>
                         <td>${transaction.note}</td>
-                        <td>${transaction.repeatingTransaction}</td>
                     </tr>
                 </c:forEach>
             </table>
+
+            <c:if test="${empty transactions}">
+                <p>Inga transaktioner hittades för valt konto.</p>
+            </c:if>
         </section>
 
     </main>

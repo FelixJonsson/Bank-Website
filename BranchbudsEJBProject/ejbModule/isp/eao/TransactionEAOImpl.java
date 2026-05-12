@@ -49,4 +49,13 @@ public class TransactionEAOImpl implements TransactionEAOLocal {
         return results;
     }
 
+    public List<Transaction> findTransactionsByUserId(int userId) {
+        TypedQuery<Transaction> query =
+            em.createNamedQuery("Transaction.findByUserId", Transaction.class);
+
+        query.setParameter("userId", userId);
+
+        return query.getResultList();
+    }
+
 }
