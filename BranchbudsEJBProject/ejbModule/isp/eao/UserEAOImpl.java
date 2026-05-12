@@ -1,6 +1,8 @@
 package isp.eao;
 
 import jakarta.ejb.Stateless;
+import java.util.List;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -13,7 +15,6 @@ public class UserEAOImpl implements UserEAOLocal {
     private EntityManager em;
 
     public UserEAOImpl() {
-        // Default constructor as shown on page 10
     }
 
     public User findUser(int id) {
@@ -46,5 +47,10 @@ public class UserEAOImpl implements UserEAOLocal {
         } catch (NoResultException e) {
             return null; 
         }
+    }
+    
+    public List<User> getAllUsers() {
+        TypedQuery<User> query = em.createQuery("SELECT u FROM User u", User.class);
+        return query.getResultList();
     }
 }
