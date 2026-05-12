@@ -18,20 +18,27 @@
     </header>
 
     <nav style="text-align:center; margin-bottom: 20px;">
-        <a href="${pageContext.request.contextPath}/MainController">Hem</a>
+        <a href="${pageContext.request.contextPath}/MainViewServlet">Hem</a>
         |
         <a href="#">Om</a>
     </nav>
 
     <main class="dashboard-grid">
-		    <form action="NastaServlet" method="POST">
+		    <form action="${pageContext.request.contextPath}/MainViewServlet" method="GET">
 		    <label for="userDropdown">Välj användare:</label>
 		    
 		    <select name="selectedUserId" id="userDropdown">
 		        <option value="">-- Välj en användare --</option>
 		        
 		        <c:forEach items="${userList}" var="user">
-		            <option value="${user.userId}">${user.userName}</option>
+		            <c:choose>
+		                <c:when test="${selectedUserId == user.userId}">
+		                    <option value="${user.userId}" selected>${user.userName}</option>
+		                </c:when>
+		                <c:otherwise>
+		                    <option value="${user.userId}">${user.userName}</option>
+		                </c:otherwise>
+		            </c:choose>
 		        </c:forEach>
 		        
 		    </select>

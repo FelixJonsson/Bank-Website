@@ -51,6 +51,30 @@ public class SystemFacade implements SystemFacadeLocal {
     public Account findAccountByUser(User user) {
         return accountEAO.findAccountByUser(user);
     }
+
+    public User findUser(int userId) {
+        return userEAO.findUser(userId);
+    }
+
+    public Account findAccountForUser(int userId) {
+        User user = this.findUser(userId);
+
+        if (user == null) {
+            return null;
+        }
+
+        return accountEAO.findAccountByUser(user);
+    }
+
+    public List<Transaction> findTransactionsForUser(int userId) {
+        Account account = this.findAccountForUser(userId);
+
+        if (account == null) {
+            return new ArrayList<Transaction>();
+        }
+
+        return transactionEAO.findTransactionsByAccount(account);
+    }
     
     public User findCurrentUser() {
         return userEAO.findUser(CURRENT_USER_ID);
