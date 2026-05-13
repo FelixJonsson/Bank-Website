@@ -17,16 +17,10 @@ src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
 <p>Simple RestClientTest</p>
 </header>
 <section id="row">
-<nav>
-<ul>
-<li class="active"><a>menu1</a></li>
-<li><a>menu2</a></li>
-<li><a>menu3</a></li>
-</ul>
-</nav>
 <aside>
 <fieldset id="ListFS">
-<legend>Accounts</legend>
+<legend>Accounts Overview</legend>
+<input type="button" name="submitBtn" value="Get Accounts" id="GetAccountsBtn">
 <table id="accountsTable">
 <tr>
 <th>AccountName</th>
@@ -44,17 +38,16 @@ src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
 <section id="content">
 <article>
 <fieldset id="PersonalFS">
-<legend>Transactions:</legend>
+<legend>Find Transactions</legend>
 Account Name:<br>
 <input type="text" name="accountName" id="accountName" value=""><br>
 <br>
-<input type="button" name="submitBtn" value="Get Accounts" id="GetAccountsBtn">
 <input type="button" name="submitBtn" value="Get Transactions" id="GetTransactionsBtn">
 </fieldset>
 </article>
 <article>
 <fieldset id="ListFS">
-<legend>Transactions</legend>
+<legend>Transaction Results</legend>
 <table id="transactionsTable">
 <tr>
 <th>Id</th>
