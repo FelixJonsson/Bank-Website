@@ -21,12 +21,20 @@ import jakarta.persistence.NamedQuery;
 @Entity
 @NamedQueries({
     @NamedQuery(
+        name = "Account.findAll",
+        query = "SELECT a FROM Account a ORDER BY a.accountId"
+    ),
+    @NamedQuery(
         name = "Account.findByUser",
         query = "SELECT a FROM Account a WHERE a.user = :user"
     ),
     @NamedQuery(
         name = "Account.findByUserId",
         query = "SELECT a FROM Account a WHERE a.user.userId = :userId"
+    ),
+    @NamedQuery(
+        name = "Account.findByName",
+        query = "SELECT a FROM Account a WHERE a.accountName = :accountName"
     )
 })
 

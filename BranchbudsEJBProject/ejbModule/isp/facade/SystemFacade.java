@@ -51,6 +51,18 @@ public class SystemFacade implements SystemFacadeLocal {
         return accountEAO.findAccountByUser(user);
     }
 
+    public Account findAccount(int accountId) {
+        return accountEAO.findAccount(accountId);
+    }
+
+    public Account findAccountByName(String accountName) {
+        return accountEAO.findAccountByName(accountName);
+    }
+
+    public List<Account> findAllAccounts() {
+        return accountEAO.findAllAccounts();
+    }
+
     public User findUser(int userId) {
         return userEAO.findUser(userId);
     }
@@ -61,6 +73,22 @@ public class SystemFacade implements SystemFacadeLocal {
 
     public List<Transaction> findTransactionsForUser(int userId) {
         return transactionEAO.findTransactionsByUserId(userId);
+    }
+
+    public List<Transaction> findTransactionsForAccountId(int accountId) {
+        Account account = accountEAO.findAccount(accountId);
+        if (account == null) {
+            return null;
+        }
+        return transactionEAO.findTransactionsByAccount(account);
+    }
+
+    public List<Transaction> findTransactionsForAccountName(String accountName) {
+        Account account = accountEAO.findAccountByName(accountName);
+        if (account == null) {
+            return null;
+        }
+        return transactionEAO.findTransactionsByAccount(account);
     }
     
     public User findCurrentUser() {

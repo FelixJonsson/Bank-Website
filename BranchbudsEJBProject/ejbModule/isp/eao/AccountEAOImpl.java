@@ -38,6 +38,28 @@ public class AccountEAOImpl implements AccountEAOLocal {
             em.remove(account);
         }
     }
+
+    public List<Account> findAllAccounts() {
+        TypedQuery<Account> query =
+            em.createNamedQuery("Account.findAll", Account.class);
+
+        return query.getResultList();
+    }
+
+    public Account findAccountByName(String accountName) {
+        TypedQuery<Account> query =
+            em.createNamedQuery("Account.findByName", Account.class);
+
+        query.setParameter("accountName", accountName);
+
+        List<Account> results = query.getResultList();
+
+        if (results.isEmpty()) {
+            return null;
+        }
+
+        return results.get(0);
+    }
     
     public Account findAccountByUser(User user) {
         TypedQuery<Account> query =
