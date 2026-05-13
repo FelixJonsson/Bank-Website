@@ -140,6 +140,15 @@
             white-space: nowrap;
             font-weight: 600;
         }
+        #weatherBox h3 {
+            margin: 0 0 12px;
+            font-size: 18px;
+        }
+        #weatherText {
+            margin: 0;
+            color: #52606d;
+            line-height: 1.5;
+        }
         footer {
             margin-top: 24px;
             text-align: center;
@@ -275,12 +284,60 @@
             </c:if>
         </section>
 
+        <section class="panel panel-wide">
+            <div id="weatherBox">
+                <h3>Weather in Lund</h3>
+                <p id="weatherText">Loading weather...</p>
+            </div>
+        </section>
+
     </main>
 
     <footer>
         <p>BranchBuds</p>
     </footer>
     </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const apiKey = "a5baa6e57d4eab0e3a14d7d378952679";
+            const city = "Lund,SE";
+
+            if (!apiKey || apiKey === "DIN_API_KEY_HAR") {
+                $("#weatherText").html("Add your OpenWeather API key to load weather.");
+                return;
+            }
+
+            $.ajax({
+                url: "https://api.openweathermap.org/data/2.5/weather",
+                method: "GET",
+                data: {
+                    q: city,
+                    appid: apiKey,
+                    units: "metric"
+                },
+                success: function (data) {
+                    const temp = data.main.temp;
+                    const description = data.weather[0].description;
+
+                    $("#weatherText").html(
+                        city + ": " + temp + "°C, " + description
+                    );
+                },
+                error: function (xhr) {
+                    let message = "Could not load weather";
+
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message += " (" + xhr.status + ": " + xhr.responseJSON.message + ")";
+                    } else if (xhr.status) {
+                        message += " (" + xhr.status + ")";
+                    }
+
+                    $("#weatherText").html(message);
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
