@@ -149,6 +149,26 @@
             color: #52606d;
             line-height: 1.5;
         }
+        .weather-city {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #52606d;
+        }
+        .weather-temp {
+            display: block;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1f2933;
+            line-height: 1.1;
+        }
+        .weather-desc {
+            display: block;
+            margin-top: 6px;
+            font-size: 14px;
+            color: #52606d;
+            text-transform: capitalize;
+        }
         footer {
             margin-top: 24px;
             text-align: center;
@@ -286,7 +306,7 @@
 
         <section class="panel panel-wide">
             <div id="weatherBox">
-                <h3>Weather in Lund</h3>
+                <h3>Current Weather in Lund</h3>
                 <p id="weatherText">Loading weather...</p>
             </div>
         </section>
@@ -300,7 +320,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         $(document).ready(function () {
-            const apiKey = "a5baa6e57d4eab0e3a14d7d378952679";
+            const apiKey = "9ec94ba1b7ac698d786c045e4f638cdd";
             const city = "Lund,SE";
 
             if (!apiKey || apiKey === "DIN_API_KEY_HAR") {
@@ -317,11 +337,13 @@
                     units: "metric"
                 },
                 success: function (data) {
-                    const temp = data.main.temp;
+                    const temp = Math.round(data.main.temp);
                     const description = data.weather[0].description;
 
                     $("#weatherText").html(
-                        city + ": " + temp + "°C, " + description
+                        "<span class=\"weather-city\">Lund, Sweden</span>" +
+                        "<span class=\"weather-temp\">" + temp + "°C</span>" +
+                        "<span class=\"weather-desc\">" + description + "</span>"
                     );
                 },
                 error: function (xhr) {
