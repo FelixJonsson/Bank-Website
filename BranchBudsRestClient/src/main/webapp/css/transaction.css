@@ -1,0 +1,83 @@
+@media screen and (max-width:600px) {
+.column {
+width: 100%;
+}
+}
+* {
+box-sizing: border-box;
+}
+header{
+padding: 10px;
+text-align: center;
+font-size: 35px;
+background-color: #f1f1f1;
+}
+aside {
+float: right;
+width: 30%;
+background-color: #f1f1f1;
+padding: 10px;
+}
+#accountsTable td {
+text-align: left;
+padding: 3px;
+}
+section#row{
+padding: 10px 0px 10px 0px;
+display:block;
+}
+section#row:after {
+content: "";
+display: table;
+clear: both;
+}
+section#main {
+float: left;
+width: 67%;
+padding: 0px 10px 0px 15px;
+background-color: #ffffff;
+color: #000000;
+}
+section#content {
+padding: 10px 10px 10px 10px;
+background-color: #f1f1f1;
+color: #000000;
+}
+#PersonalFS {
+width:350px;
+}
+#ListFS {
+margin-top: 0;
+}
+input[type="text"] {
+width: 350px;
+padding: 8px;
+margin-top: 4px;
+margin-bottom: 10px;
+}
+input[type="button"] {
+padding: 8px 12px;
+margin-right: 6px;
+margin-bottom: 6px;
+}
+table {
+width: 100%;
+border-collapse: collapse;
+background-color: #ffffff;
+}
+th, td {
+text-align: left;
+padding: 8px;
+border-bottom: 1px solid #d6d6d6;
+}
+#statusLabel {
+color: #666666;
+font-size: 13px;
+margin-top: 16px;
+}
+footer{
+text-align: center;
+padding: 1px;
+background-color: #f1f1f1;
+clear: both;
+}
