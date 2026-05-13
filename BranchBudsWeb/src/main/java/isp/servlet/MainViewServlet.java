@@ -27,7 +27,10 @@ public class MainViewServlet extends HttpServlet {
 
 		List<User> allUsers = systemFacade.getAllUsers();
 		List<Category> categories = systemFacade.findAllCategories();
-		String selectedUserIdParam = request.getParameter("selectedUserId");
+		String selectedUserIdParam = request.getParameter("selectedUserId");// Fånga upp klicket på "Redigera"
+		String editIdStr = request.getParameter("editTransactionId");
+
+
 
 		User currentUser;
 		Account currentAccount;
@@ -54,6 +57,16 @@ public class MainViewServlet extends HttpServlet {
 				selectedUserId = currentUser.getUserId();
 			}
 		}
+		
+		if (editIdStr != null && !editIdStr.isEmpty()) {
+		    try {
+		        int txId = Integer.parseInt(editIdStr);
+		        Transaction tx = systemFacade.findTransaction(txId); 
+		        request.setAttribute("transactionToEdit", tx);
+		    } catch (Exception e) {
+		        System.out.println("Fel vid hämtning av transaktion: " + e.getMessage());
+		    }
+		}
 
 		request.setAttribute("viewLoaded", Boolean.TRUE);
 		request.setAttribute("selectedUserId", selectedUserId);
@@ -64,5 +77,32 @@ public class MainViewServlet extends HttpServlet {
 		request.setAttribute("userList", allUsers);
 
 		request.getRequestDispatcher("/index.jsp").forward(request, response);
+	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+	        throws ServletException, IOException {
+	    
+	    String selectedUserId = request.getParameter("selectedUserId");
+	    String transactionIdStr = request.getParameter("transactionId");
+	    String note = request.getParameter("note"); 
+	    String amountStr = request.getParameter("amount");
+	    String categoryIdStr = request.getParameter("categoryId");
+
+	    try {
+	        int transactionId = Integer.parseInt(transactionIdStr);
+	        double amount = Double.parseDouble(amountStr);
+	        int categoryId = Integer.parseInt(categoryIdStr);
+
+	        systemFacade.updateTransaction(transactionId, categoryId, amount);
+
+	    } catch (Exception e) {
+	        System.out.println("Fel vid uppdatering: " + e.getMessage());
+	    }
+
+	    String redirectUrl = request.getContextPath() + "/MainViewServlet";
+	    if (selectedUserId != null && !selectedUserId.isBlank()) {
+	        redirectUrl += "?selectedUserId=" + selectedUserId;
+	    }
+	    response.sendRedirect(redirectUrl);
 	}
 }

@@ -231,35 +231,30 @@
             </c:choose>
         </section>
 
-			<section class="panel">
-			    <h2>Redigera transaktion</h2>
-			
-			    <form action="${pageContext.request.contextPath}/EditTransactionServlet" method="POST">
+			<c:if test="${not empty transactionToEdit}">
+			    <div style="background-color: #e6f2ff; padding: 20px; border: 2px solid #0056b3; margin-bottom: 20px; border-radius: 8px;">
+			        <h3 style="margin-top: 0;">Redigera vald transaktion</h3>
 			        
-			        <input type="hidden" name="transactionId" value="${transactionToEdit.id}">
+			        <form action="${pageContext.request.contextPath}/MainViewServlet" method="POST">
+			            <input type="hidden" name="transactionId" value="${transactionToEdit.transactionId}">
+			            <input type="hidden" name="selectedUserId" value="${selectedUserId}">
 			
-			        <label for="desc">Beskrivning:</label>
-			        <input type="text" id="desc" name="description" value="${transactionToEdit.description}" required>
-			        <br><br>
+			            <p><strong>Datum:</strong> ${transactionToEdit.transactionDate}</p>
+			            <p><strong>Nuvarande kategori:</strong> ${transactionToEdit.category.categoryName}</p>
 			
-			        <label for="amount">Belopp:</label>
-			        <input type="number" id="amount" name="amount" value="${transactionToEdit.amount}" step="0.01" required>
-			        <br><br>
+			            <label>Belopp:</label><br>
+			            <input type="number" name="amount" value="${transactionToEdit.amount}" step="0.01" required>
+			            <br><br>
 			
-			        <label for="category">Kategori:</label>
-			        <select id="category" name="categoryId" required>
-			            <option value="">-- Välj en kategori --</option>
-			            <c:forEach var="cat" items="${categories}">
-			                <option value="${cat.categoryId}" ${cat.categoryId == transactionToEdit.category.categoryId ? 'selected' : ''}>
-			                    ${cat.categoryName} (${cat.categoryType})
-			                </option>
-			            </c:forEach>
-			        </select>
-			        <br><br>
+			            <label>Kommentar:</label><br>
+			            <input type="text" name="note" value="${transactionToEdit.note}">
+			            <br><br>
 			
-			        <button type="submit">Spara ändringar</button>
-			    </form>
-			</section>
+			            <button type="submit" style="padding: 10px; background: #0056b3; color: white; border: none; cursor: pointer;">Spara ändringar</button>
+			            <a href="${pageContext.request.contextPath}/MainViewServlet?selectedUserId=${selectedUserId}" style="margin-left: 15px; color: red;">Avbryt / Stäng</a>
+			        </form>
+			    </div>
+			</c:if>
 
         <section class="panel panel-wide">
             <h2>Transaktioner</h2>
@@ -278,6 +273,12 @@
                         <td>${transaction.category.categoryName}</td>
                         <td class="amount">${transaction.amount}</td>
                         <td>${transaction.note}</td>
+                        
+						<td>
+						    <a href="${pageContext.request.contextPath}/MainViewServlet?selectedUserId=${selectedUserId}&editTransactionId=${transaction.transactionId}">
+						        Redigera
+						    </a>
+						</td>
                     </tr>
                 </c:forEach>
             </table>

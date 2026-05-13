@@ -48,4 +48,10 @@ public class CategoryEAOImpl implements CategoryEAOLocal {
         return results;
     }
 
+	@Override
+	public Category findById(int newCategoryId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
