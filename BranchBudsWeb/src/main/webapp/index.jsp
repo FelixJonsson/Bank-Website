@@ -157,6 +157,69 @@
         .action-button:hover {
             background: #f8fafc;
         }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.45);
+        }
+        .modal-backdrop.is-open {
+            display: flex;
+        }
+        .modal {
+            width: 100%;
+            max-width: 520px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
+        }
+        .modal h3 {
+            margin: 0 0 16px;
+            font-size: 20px;
+        }
+        .modal-grid {
+            display: grid;
+            gap: 14px;
+        }
+        .modal-field label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .modal-field input,
+        .modal-field textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #bcccdc;
+            border-radius: 6px;
+            font: inherit;
+        }
+        .modal-field textarea {
+            min-height: 96px;
+            resize: vertical;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 18px;
+        }
+        .modal-close {
+            background: #f8fafc;
+        }
+        .modal-save {
+            background: #1f5f8b;
+            border-color: #1f5f8b;
+            color: #ffffff;
+        }
+        .modal-save:hover {
+            background: #17496b;
+        }
         #weatherBox h3 {
             margin: 0 0 12px;
             font-size: 18px;
@@ -314,7 +377,17 @@
                         <td class="amount">${transaction.amount}</td>
                         <td>${transaction.note}</td>
                         <td class="actions">
-                            <button type="button" class="action-button">Redigera</button>
+                            <button
+                                type="button"
+                                class="action-button edit-transaction-button"
+                                data-transaction-id="${transaction.transactionId}"
+                                data-category-id="${transaction.category.categoryId}"
+                                data-category-name="${transaction.category.categoryName}"
+                                data-transaction-date="${fn:substring(transaction.transactionDate, 0, 10)}"
+                                data-amount="${transaction.amount}"
+                                data-note="${transaction.note}">
+                                Redigera
+                            </button>
                         </td>
                     </tr>
                 </c:forEach>
@@ -334,6 +407,36 @@
 
     </main>
 
+    <div id="editTransactionModal" class="modal-backdrop" aria-hidden="true">
+        <div class="modal">
+            <h3>Redigera transaktion</h3>
+            <form>
+                <div class="modal-grid">
+                    <div class="modal-field">
+                        <label for="editCategoryName">Kategori</label>
+                        <input type="text" id="editCategoryName" readonly>
+                    </div>
+                    <div class="modal-field">
+                        <label for="editTransactionDate">Datum</label>
+                        <input type="date" id="editTransactionDate">
+                    </div>
+                    <div class="modal-field">
+                        <label for="editAmount">Belopp</label>
+                        <input type="text" id="editAmount">
+                    </div>
+                    <div class="modal-field">
+                        <label for="editNote">Kommentar</label>
+                        <textarea id="editNote"></textarea>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="action-button modal-save">Spara</button>
+                    <button type="button" class="action-button modal-close" id="closeEditModalButton">Stäng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <footer>
         <p>BranchBuds</p>
     </footer>
@@ -341,6 +444,33 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         $(document).ready(function () {
+            const modal = $("#editTransactionModal");
+            const categoryNameField = $("#editCategoryName");
+            const transactionDateField = $("#editTransactionDate");
+            const amountField = $("#editAmount");
+            const noteField = $("#editNote");
+
+            $(".edit-transaction-button").on("click", function () {
+                const button = $(this);
+
+                categoryNameField.val(button.data("category-name"));
+                transactionDateField.val(button.data("transaction-date"));
+                amountField.val(button.data("amount"));
+                noteField.val(button.data("note"));
+
+                modal.addClass("is-open").attr("aria-hidden", "false");
+            });
+
+            $("#closeEditModalButton").on("click", function () {
+                modal.removeClass("is-open").attr("aria-hidden", "true");
+            });
+
+            modal.on("click", function (event) {
+                if (event.target === this) {
+                    modal.removeClass("is-open").attr("aria-hidden", "true");
+                }
+            });
+
             const apiKey = "9ec94ba1b7ac698d786c045e4f638cdd";
             const city = "Lund,SE";
 
