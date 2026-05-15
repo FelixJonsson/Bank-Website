@@ -48,6 +48,21 @@
             gap: 14px;
             font-size: 14px;
         }
+        .nav-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 88px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: #111827;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .nav-links a:hover {
+            background: #1f2937;
+            text-decoration: none;
+        }
         .toolbar {
             display: flex;
             justify-content: space-between;
@@ -283,7 +298,7 @@
         </div>
         <nav class="nav-links">
             <a href="${pageContext.request.contextPath}/MainViewServlet">Hem</a>
-            <a href="#">Om</a>
+            <a href="${pageContext.request.contextPath}/about.jsp">Om</a>
         </nav>
     </header>
 
