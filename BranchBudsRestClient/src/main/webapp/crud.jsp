@@ -10,16 +10,16 @@ src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
 <link rel="stylesheet" type="text/css" href="css/transaction.css">
 <script src="js/transaction.js"></script>
 <meta charset="ISO-8859-1">
-<title>Rest Test</title>
+<title>BranchBuds Rest Client</title>
 </head>
 <body>
 <header>
-<p>Simple RestClientTest</p>
+<p>BranchBuds Rest Client</p>
 </header>
 <section id="row">
 <aside>
 <fieldset id="ListFS">
-<legend>Accounts Overview</legend>
+<legend>Accounts</legend>
 <input type="button" name="submitBtn" value="Get Accounts" id="GetAccountsBtn">
 <table id="accountsTable">
 <tr>
@@ -38,7 +38,7 @@ src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
 <section id="content">
 <article>
 <fieldset id="PersonalFS">
-<legend>Find Transactions</legend>
+<legend>Find transactions for specific account</legend>
 Account Name:<br>
 <input type="text" name="accountName" id="accountName" value=""><br>
 <br>
@@ -47,7 +47,7 @@ Account Name:<br>
 </article>
 <article>
 <fieldset id="ListFS">
-<legend>Transaction Results</legend>
+<legend>Transactions</legend>
 <table id="transactionsTable">
 <tr>
 <th>Id</th>
