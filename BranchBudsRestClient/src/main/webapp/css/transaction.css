@@ -7,13 +7,14 @@ width: 100%;
 box-sizing: border-box;
 }
 header{
-padding: 10px;
+padding: 14px;
 text-align: center;
-font-size: 35px;
+font-size: 28px;
+font-weight: 600;
 background-color: #f1f1f1;
 }
 aside {
-float: right;
+float: left;
 width: 30%;
 background-color: #f1f1f1;
 padding: 10px;
@@ -32,7 +33,7 @@ display: table;
 clear: both;
 }
 section#main {
-float: left;
+float: right;
 width: 67%;
 padding: 0px 10px 0px 15px;
 background-color: #ffffff;
@@ -44,21 +45,39 @@ background-color: #f1f1f1;
 color: #000000;
 }
 #PersonalFS {
-width:350px;
+width: 100%;
 }
 #ListFS {
 margin-top: 0;
 }
+fieldset {
+border: 1px solid #d6d6d6;
+background-color: #ffffff;
+padding: 14px;
+}
+legend {
+padding: 0 6px;
+font-weight: 600;
+}
 input[type="text"] {
-width: 350px;
+width: 100%;
+max-width: 420px;
 padding: 8px;
 margin-top: 4px;
 margin-bottom: 10px;
+border: 1px solid #c7c7c7;
 }
 input[type="button"] {
 padding: 8px 12px;
 margin-right: 6px;
 margin-bottom: 6px;
+border: 1px solid #111111;
+background-color: #111111;
+color: #ffffff;
+cursor: pointer;
+}
+input[type="button"]:hover {
+background-color: #2a2a2a;
 }
 table {
 width: 100%;
@@ -77,7 +96,7 @@ margin-top: 16px;
 }
 footer{
 text-align: center;
-padding: 1px;
+padding: 8px;
 background-color: #f1f1f1;
 clear: both;
 }
