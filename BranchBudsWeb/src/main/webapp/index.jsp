@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -139,6 +140,22 @@
         .amount {
             white-space: nowrap;
             font-weight: 600;
+        }
+        .actions {
+            white-space: nowrap;
+            width: 1%;
+        }
+        .action-button {
+            padding: 8px 12px;
+            border: 1px solid #bcccdc;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #1f2933;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .action-button:hover {
+            background: #f8fafc;
         }
         #weatherBox h3 {
             margin: 0 0 12px;
@@ -287,14 +304,18 @@
                     <th>Kategori</th>
                     <th>Belopp</th>
                     <th>Kommentar</th>
+                    <th>Åtgärd</th>
                 </tr>
 
                 <c:forEach var="transaction" items="${transactions}">
                     <tr>
-                        <td>${transaction.transactionDate}</td>
+                        <td>${fn:substring(transaction.transactionDate, 0, 10)}</td>
                         <td>${transaction.category.categoryName}</td>
                         <td class="amount">${transaction.amount}</td>
                         <td>${transaction.note}</td>
+                        <td class="actions">
+                            <button type="button" class="action-button">Redigera</button>
+                        </td>
                     </tr>
                 </c:forEach>
             </table>
