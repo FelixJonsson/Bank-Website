@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -46,6 +47,21 @@
             display: flex;
             gap: 14px;
             font-size: 14px;
+        }
+        .nav-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 88px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: #111827;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .nav-links a:hover {
+            background: #1f2937;
+            text-decoration: none;
         }
         .toolbar {
             display: flex;
@@ -140,6 +156,114 @@
             white-space: nowrap;
             font-weight: 600;
         }
+        .actions {
+            white-space: nowrap;
+            width: 1%;
+        }
+        .action-button {
+            padding: 8px 12px;
+            border: 1px solid #bcccdc;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #1f2933;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .action-button:hover {
+            background: #f8fafc;
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.45);
+        }
+        .modal-backdrop.is-open {
+            display: flex;
+        }
+        .modal {
+            width: 100%;
+            max-width: 520px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
+        }
+        .modal h3 {
+            margin: 0 0 16px;
+            font-size: 20px;
+        }
+        .modal-grid {
+            display: grid;
+            gap: 14px;
+        }
+        .modal-field label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .modal-field input,
+        .modal-field textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #bcccdc;
+            border-radius: 6px;
+            font: inherit;
+        }
+        .modal-field textarea {
+            min-height: 96px;
+            resize: vertical;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 18px;
+        }
+        .modal-close {
+            background: #f8fafc;
+        }
+        .modal-save {
+            background: #1f5f8b;
+            border-color: #1f5f8b;
+            color: #ffffff;
+        }
+        .modal-save:hover {
+            background: #17496b;
+        }
+        #weatherBox h3 {
+            margin: 0 0 12px;
+            font-size: 18px;
+        }
+        #weatherText {
+            margin: 0;
+            color: #52606d;
+            line-height: 1.5;
+        }
+        .weather-city {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #52606d;
+        }
+        .weather-temp {
+            display: block;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1f2933;
+            line-height: 1.1;
+        }
+        .weather-desc {
+            display: block;
+            margin-top: 6px;
+            font-size: 14px;
+            color: #52606d;
+            text-transform: capitalize;
+        }
         footer {
             margin-top: 24px;
             text-align: center;
@@ -174,7 +298,7 @@
         </div>
    		<nav class="nav-links">
             <a href="${pageContext.request.contextPath}/MainViewServlet">Hem</a>
-            <a href="#">Om</a>
+            <a href="${pageContext.request.contextPath}/about.jsp">Om</a>
         </nav>
     </header>
 
@@ -265,20 +389,30 @@
                     <th>Kategori</th>
                     <th>Belopp</th>
                     <th>Kommentar</th>
+                    <th>Åtgärd</th>
                 </tr>
 
                 <c:forEach var="transaction" items="${transactions}">
                     <tr>
-                        <td>${transaction.transactionDate}</td>
+                        <td>${fn:substring(transaction.transactionDate, 0, 10)}</td>
                         <td>${transaction.category.categoryName}</td>
                         <td class="amount">${transaction.amount}</td>
                         <td>${transaction.note}</td>
-                        
-						<td>
-						    <a href="${pageContext.request.contextPath}/MainViewServlet?selectedUserId=${selectedUserId}&editTransactionId=${transaction.transactionId}">
-						        Redigera
-						    </a>
-						</td>
+
+                        <td class="actions">
+                            <button
+                                type="button"
+                                class="action-button edit-transaction-button"
+                                data-transaction-id="${transaction.transactionId}"
+                                data-category-id="${transaction.category.categoryId}"
+                                data-category-name="${transaction.category.categoryName}"
+                                data-transaction-date="${fn:substring(transaction.transactionDate, 0, 10)}"
+                                data-amount="${transaction.amount}"
+                                data-note="${transaction.note}">
+                                Redigera
+                            </button>
+                        </td>
+
                     </tr>
                 </c:forEach>
             </table>
@@ -288,12 +422,119 @@
             </c:if>
         </section>
 
+        <section class="panel panel-wide">
+            <div id="weatherBox">
+                <h3>Current Weather in Lund</h3>
+                <p id="weatherText">Loading weather...</p>
+            </div>
+        </section>
+
     </main>
+
+    <div id="editTransactionModal" class="modal-backdrop" aria-hidden="true">
+        <div class="modal">
+            <h3>Redigera transaktion</h3>
+            <form>
+                <div class="modal-grid">
+                    <div class="modal-field">
+                        <label for="editCategoryName">Kategori</label>
+                        <input type="text" id="editCategoryName" readonly>
+                    </div>
+                    <div class="modal-field">
+                        <label for="editTransactionDate">Datum</label>
+                        <input type="date" id="editTransactionDate">
+                    </div>
+                    <div class="modal-field">
+                        <label for="editAmount">Belopp</label>
+                        <input type="text" id="editAmount">
+                    </div>
+                    <div class="modal-field">
+                        <label for="editNote">Kommentar</label>
+                        <textarea id="editNote"></textarea>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="action-button modal-save">Spara</button>
+                    <button type="button" class="action-button modal-close" id="closeEditModalButton">Stäng</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <footer>
         <p></p>
     </footer>
     </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const modal = $("#editTransactionModal");
+            const categoryNameField = $("#editCategoryName");
+            const transactionDateField = $("#editTransactionDate");
+            const amountField = $("#editAmount");
+            const noteField = $("#editNote");
+
+            $(".edit-transaction-button").on("click", function () {
+                const button = $(this);
+
+                categoryNameField.val(button.data("category-name"));
+                transactionDateField.val(button.data("transaction-date"));
+                amountField.val(button.data("amount"));
+                noteField.val(button.data("note"));
+
+                modal.addClass("is-open").attr("aria-hidden", "false");
+            });
+
+            $("#closeEditModalButton").on("click", function () {
+                modal.removeClass("is-open").attr("aria-hidden", "true");
+            });
+
+            modal.on("click", function (event) {
+                if (event.target === this) {
+                    modal.removeClass("is-open").attr("aria-hidden", "true");
+                }
+            });
+
+            const apiKey = "9ec94ba1b7ac698d786c045e4f638cdd";
+            const city = "Lund,SE";
+
+            if (!apiKey || apiKey === "DIN_API_KEY_HAR") {
+                $("#weatherText").html("Add your OpenWeather API key to load weather.");
+                return;
+            }
+
+            $.ajax({
+                url: "https://api.openweathermap.org/data/2.5/weather",
+                method: "GET",
+                data: {
+                    q: city,
+                    appid: apiKey,
+                    units: "metric"
+                },
+                success: function (data) {
+                    const temp = Math.round(data.main.temp);
+                    const description = data.weather[0].description;
+
+                    $("#weatherText").html(
+                        "<span class=\"weather-city\">Lund, Sweden</span>" +
+                        "<span class=\"weather-temp\">" + temp + "°C</span>" +
+                        "<span class=\"weather-desc\">" + description + "</span>"
+                    );
+                },
+                error: function (xhr) {
+                    let message = "Could not load weather";
+
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message += " (" + xhr.status + ": " + xhr.responseJSON.message + ")";
+                    } else if (xhr.status) {
+                        message += " (" + xhr.status + ")";
+                    }
+
+                    $("#weatherText").html(message);
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -18,9 +18,14 @@ public interface SystemFacadeLocal {
 	public List<Transaction> findTransactionsByAccount(Account account);
 	public List<Category> findAllCategories();
 	public Account findAccountByUser(User user);
+	public Account findAccount(int accountId);
+	public Account findAccountByName(String accountName);
+	public List<Account> findAllAccounts();
 	public User findUser(int userId);
 	public Account findAccountForUser(int userId);
 	public List<Transaction> findTransactionsForUser(int userId);
+	public List<Transaction> findTransactionsForAccountId(int accountId);
+	public List<Transaction> findTransactionsForAccountName(String accountName);
 	public User findCurrentUser();
 	public Account findCurrentUserAccount();
 	public List<Transaction> findTransactionsForCurrentUser();

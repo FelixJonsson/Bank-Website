@@ -1,0 +1,229 @@
+package isp.restserver;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import isp.entity.Transaction;
+import isp.facade.SystemFacadeLocal;
+import jakarta.ejb.EJB;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonReader;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet("/Transactions/*")
+public class Transactions extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    @EJB
+    private SystemFacadeLocal facade;
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String pathInfo = request.getPathInfo();
+        if (pathInfo == null || pathInfo.equals("/")) {
+            List<Transaction> allTransactions = facade.findTransactionsForCurrentUser();
+            sendAsJson(response, allTransactions);
+            return;
+        }
+
+        String[] splits = pathInfo.split("/");
+        if (splits.length != 2) {
+            if (splits.length == 3 && "account".equals(splits[1])) {
+                try {
+                    List<Transaction> transactions = facade.findTransactionsForAccountId(
+                        Integer.parseInt(splits[2]));
+                    sendAsJson(response, transactions);
+                } catch (NumberFormatException e) {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                }
+                return;
+            }
+            if (splits.length == 3 && "account-name".equals(splits[1])) {
+                List<Transaction> transactions = facade.findTransactionsForAccountName(splits[2]);
+                sendAsJson(response, transactions);
+                return;
+            }
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        try {
+            String id = splits[1];
+            Transaction transaction = facade.findTransactionForCurrentUser(Integer.parseInt(id));
+            sendAsJson(response, transaction);
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String pathInfo = request.getPathInfo();
+        if (pathInfo == null || pathInfo.equals("/")) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        String[] splits = pathInfo.split("/");
+        if (splits.length != 2) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        try {
+            String id = splits[1];
+            Transaction transaction = facade.findTransactionForCurrentUser(Integer.parseInt(id));
+            if (transaction != null) {
+                facade.deleteTransactionForCurrentUser(Integer.parseInt(id));
+            }
+            sendAsJson(response, transaction);
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String pathInfo = request.getPathInfo();
+        if (pathInfo == null || pathInfo.equals("/")) {
+            BufferedReader reader = request.getReader();
+            TransactionPayload payload = parseJsonTransaction(reader);
+            Transaction transaction = facade.createTransactionForCurrentUser(
+                payload.categoryId,
+                payload.transactionDate,
+                payload.amount,
+                payload.note,
+                false
+            );
+            sendAsJson(response, transaction);
+            return;
+        }
+
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String pathInfo = request.getPathInfo();
+        if (pathInfo == null || pathInfo.equals("/")) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        String[] splits = pathInfo.split("/");
+        if (splits.length != 2) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        try {
+            String id = splits[1];
+            BufferedReader reader = request.getReader();
+            TransactionPayload payload = parseJsonTransaction(reader);
+            Transaction transaction = facade.updateTransactionForCurrentUser(
+                Integer.parseInt(id),
+                payload.categoryId,
+                payload.transactionDate,
+                payload.amount,
+                payload.note,
+                false
+            );
+            sendAsJson(response, transaction);
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        }
+    }
+
+    private void sendAsJson(HttpServletResponse response, Transaction transaction)
+            throws IOException {
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        if (transaction != null) {
+            JsonObjectBuilder object = Json.createObjectBuilder();
+            object.add("id", String.valueOf(transaction.getTransactionId()));
+            object.add("categoryId", String.valueOf(transaction.getCategory().getCategoryId()));
+            object.add("categoryName", transaction.getCategory().getCategoryName());
+            object.add("transactionDate", transaction.getTransactionDate().toLocalDateTime().toString());
+            object.add("amount", String.valueOf(transaction.getAmount()));
+            object.add("note", transaction.getNote() == null ? "" : transaction.getNote());
+            out.print(object.build());
+        } else {
+            out.print("{ }");
+        }
+
+        out.flush();
+    }
+
+    private void sendAsJson(HttpServletResponse response, List<Transaction> transactions)
+            throws IOException {
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        if (transactions != null) {
+            JsonArrayBuilder array = Json.createArrayBuilder();
+            for (Transaction transaction : transactions) {
+                JsonObjectBuilder object = Json.createObjectBuilder();
+                object.add("id", String.valueOf(transaction.getTransactionId()));
+                object.add("categoryId", String.valueOf(transaction.getCategory().getCategoryId()));
+                object.add("categoryName", transaction.getCategory().getCategoryName());
+                object.add("transactionDate", transaction.getTransactionDate().toLocalDateTime().toString());
+                object.add("amount", String.valueOf(transaction.getAmount()));
+                object.add("note", transaction.getNote() == null ? "" : transaction.getNote());
+                array.add(object);
+            }
+            JsonArray jsonArray = array.build();
+            out.print(jsonArray);
+        } else {
+            out.print("[]");
+        }
+
+        out.flush();
+    }
+
+    private TransactionPayload parseJsonTransaction(BufferedReader reader) {
+        JsonReader jsonReader = Json.createReader(reader);
+        JsonObject jsonRoot = jsonReader.readObject();
+
+        TransactionPayload payload = new TransactionPayload();
+        payload.categoryId = Integer.parseInt(jsonRoot.getString("categoryId"));
+        payload.transactionDate = parseTimestamp(jsonRoot.getString("transactionDate"));
+        payload.amount = new BigDecimal(jsonRoot.getString("amount"));
+        payload.note = jsonRoot.containsKey("note") ? jsonRoot.getString("note") : "";
+        return payload;
+    }
+
+    private Timestamp parseTimestamp(String value) {
+        return Timestamp.valueOf(LocalDateTime.parse(value));
+    }
+
+    private static class TransactionPayload {
+        private int categoryId;
+        private Timestamp transactionDate;
+        private BigDecimal amount;
+        private String note;
+    }
+}
