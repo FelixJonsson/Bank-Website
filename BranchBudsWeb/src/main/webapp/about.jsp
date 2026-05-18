@@ -117,7 +117,7 @@
         <header class="topbar">
             <div class="brand">
                 <h1>BranchBuds</h1>
-                <p>Översikt över användare, konton och transaktioner</p>
+                <p>Overview of users, accounts and transactions</p>
             </div>
             <nav class="nav-links">
                 <a href="${pageContext.request.contextPath}/MainViewServlet">Hem</a>
@@ -127,15 +127,15 @@
 
         <main>
             <section class="panel">
-                <h2>Om BranchBuds</h2>
+                <h2>About BranchBuds</h2>
                 <p class="about-copy">
-                    BranchBuds är ett enkelt budgetverktyg som samlar användare, konton och transaktioner i ett tydligt gränssnitt. Målet är att göra det lätt att få överblick över ekonomin och enkelt att arbeta vidare med transaktioner i samma flöde.
+BranchBuds is a simple budgeting tool that brings users, accounts and transactions together in one clear interface. The goal is to make it easy to understand your finances and continue working with transactions in the same flow.
                 </p>
                 <div class="founder">
                     <img src="founder-preview.png" alt="Grundaren av BranchBuds">
                     <div class="founder-copy">
-                        <h3>Grundaren</h3>
-                        <p>Det här är grundaren. Han är locked in.</p>
+                        <h3>Founder</h3>
+                        <p>This is the founder. He is locked in.</p>
                     </div>
                 </div>
             </section>
