@@ -116,7 +116,7 @@ public class Transaction implements Serializable {
         this.note = note;
     }
     
-    @Transient
+    @Column(name = "RepeatingTransaction")
     public boolean isRepeatingTransaction() {
         return repeatingTransaction;
     }
