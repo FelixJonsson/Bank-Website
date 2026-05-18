@@ -297,8 +297,8 @@
             <p>Overview of users, accounts and transactions</p>
         </div>
         <nav class="nav-links">
-            <a href="${pageContext.request.contextPath}/MainViewServlet">Hem</a>
-            <a href="${pageContext.request.contextPath}/about.jsp">Om</a>
+            <a href="${pageContext.request.contextPath}/MainViewServlet">Home</a>
+            <a href="${pageContext.request.contextPath}/about.jsp">About</a>
         </nav>
     </header>
 
@@ -438,6 +438,7 @@
         <div class="modal">
             <h3>Edit transaction</h3>
             <form>
+            <input type="hidden" id="editTransactionId">
                 <div class="modal-grid">
                     <div class="modal-field">
                         <label for="editCategoryName">Category</label>
@@ -457,7 +458,7 @@
                     </div>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="action-button modal-save">Spara</button>
+                    <button type="button" class="action-button modal-save">Save</button>
                     <button type="button" class="action-button modal-close" id="closeEditModalButton">Stäng</button>
                 </div>
             </form>
@@ -480,6 +481,7 @@
             $(".edit-transaction-button").on("click", function () {
                 const button = $(this);
 
+                $("#editTransactionId").val(button.data("transaction-id"));
                 categoryNameField.val(button.data("category-name"));
                 transactionDateField.val(button.data("transaction-date"));
                 amountField.val(button.data("amount"));
@@ -487,6 +489,30 @@
 
                 modal.addClass("is-open").attr("aria-hidden", "false");
             });
+            
+            $(".modal-save").on("click", function () {
+                const transactionId = $("#editTransactionId").val();
+                const editButton = $(".edit-transaction-button[data-transaction-id='" + transactionId + "']");
+
+                $.ajax({
+                    url: "${pageContext.request.contextPath}/Transactions/" + transactionId,
+                    method: "PUT",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        categoryId: editButton.data("category-id").toString(),
+                        transactionDate: transactionDateField.val() + "T00:00:00",
+                        amount: amountField.val(),
+                        note: noteField.val()
+                    }),
+                    success: function () {
+                        location.reload();
+                    },
+                    error: function () {
+                        alert("Could not save transaction.");
+                    }
+                });
+            });
+
 
             $("#closeEditModalButton").on("click", function () {
                 modal.removeClass("is-open").attr("aria-hidden", "true");
