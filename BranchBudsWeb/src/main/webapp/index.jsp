@@ -294,9 +294,9 @@
     <header class="topbar">
         <div class="brand">
             <h1>BranchBuds</h1>
-            <p>Översikt över användare, konton och transaktioner</p>
+            <p>Overview of users, accounts and transactions</p>
         </div>
-   		<nav class="nav-links">
+        <nav class="nav-links">
             <a href="${pageContext.request.contextPath}/MainViewServlet">Hem</a>
             <a href="${pageContext.request.contextPath}/about.jsp">Om</a>
         </nav>
@@ -304,9 +304,9 @@
 
     <section class="toolbar">
         <form action="${pageContext.request.contextPath}/MainViewServlet" method="GET">
-            <label for="userDropdown">Välj användare</label>
+            <label for="userDropdown">Select user</label>
             <select name="selectedUserId" id="userDropdown" onchange="this.form.submit()">
-                <option value="">-- Välj en användare --</option>
+                <option value="">-- Select a user --</option>
                 <c:forEach items="${userList}" var="user">
                     <c:choose>
                         <c:when test="${selectedUserId == user.userId}">
@@ -319,26 +319,26 @@
                 </c:forEach>
             </select>
         </form>
-        <p class="toolbar-note">När du väljer en användare uppdateras sidan direkt.</p>
+        <p class="toolbar-note">The page updates when you select a user.</p>
     </section>
 
     <main class="dashboard-grid">
         <section class="panel">
-            <h2>Kontoöversikt</h2>
+            <h2>Account overview</h2>
 
             <c:if test="${currentUser != null}">
                 <div class="overview-list">
                     <div class="overview-item">
-                        <span class="overview-label">Användare</span>
+                        <span class="overview-label">User</span>
                         <span class="overview-value">${currentUser.userName}</span>
                     </div>
                     <c:if test="${currentAccount != null}">
                         <div class="overview-item">
-                            <span class="overview-label">Konto</span>
+                            <span class="overview-label">Account</span>
                             <span class="overview-value">${currentAccount.accountName}</span>
                         </div>
                         <div class="overview-item">
-                            <span class="overview-label">Saldo</span>
+                            <span class="overview-label">Balance</span>
                             <span class="overview-value">${currentAccount.currentBalance} kr</span>
                         </div>
                     </c:if>
@@ -347,49 +347,43 @@
 
             <c:choose>
                 <c:when test="${currentUser == null}">
-                    <p class="empty-state">Välj en användare för att visa kontoinformation.</p>
+                    <p class="empty-state">Select a user to view account information.</p>
                 </c:when>
                 <c:when test="${currentAccount == null}">
-                    <p class="empty-state">Inget konto hittades för aktuell användare.</p>
+                    <p class="empty-state">No account was found for the selected user.</p>
                 </c:when>
             </c:choose>
         </section>
 
-			<c:if test="${not empty transactionToEdit}">
-			    <div style="background-color: #e6f2ff; padding: 20px; border: 2px solid #0056b3; margin-bottom: 20px; border-radius: 8px;">
-			        <h3 style="margin-top: 0;">Redigera vald transaktion</h3>
-			        
-			        <form action="${pageContext.request.contextPath}/MainViewServlet" method="POST">
-			            <input type="hidden" name="transactionId" value="${transactionToEdit.transactionId}">
-			            <input type="hidden" name="selectedUserId" value="${selectedUserId}">
-			
-			            <p><strong>Datum:</strong> ${transactionToEdit.transactionDate}</p>
-			            <p><strong>Nuvarande kategori:</strong> ${transactionToEdit.category.categoryName}</p>
-			
-			            <label>Belopp:</label><br>
-			            <input type="number" name="amount" value="${transactionToEdit.amount}" step="0.01" required>
-			            <br><br>
-			
-			            <label>Kommentar:</label><br>
-			            <input type="text" name="note" value="${transactionToEdit.note}">
-			            <br><br>
-			
-			            <button type="submit" style="padding: 10px; background: #0056b3; color: white; border: none; cursor: pointer;">Spara ändringar</button>
-			            <a href="${pageContext.request.contextPath}/MainViewServlet?selectedUserId=${selectedUserId}" style="margin-left: 15px; color: red;">Avbryt / Stäng</a>
-			        </form>
-			    </div>
-			</c:if>
-
-        <section class="panel panel-wide">
-            <h2>Transaktioner</h2>
+        <section class="panel">
+            <h2>Available categories</h2>
 
             <table>
                 <tr>
-                    <th>Datum</th>
-                    <th>Kategori</th>
-                    <th>Belopp</th>
-                    <th>Kommentar</th>
-                    <th>Åtgärd</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                </tr>
+
+                <c:forEach var="cat" items="${categories}">
+                    <tr>
+                        <td>${cat.categoryName}</td>
+                        <td>${cat.categoryType}</td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </section>
+
+        <section class="panel panel-wide">
+            <h2>Transactions</h2>
+
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Repeating</th>
+                    <th>Comment</th>
+                    <th>Action</th>
                 </tr>
 
                 <c:forEach var="transaction" items="${transactions}">
@@ -397,7 +391,17 @@
                         <td>${fn:substring(transaction.transactionDate, 0, 10)}</td>
                         <td>${transaction.category.categoryName}</td>
                         <td class="amount">${transaction.amount}</td>
-                        <td>${transaction.note}</td>
+						<td>
+    						<c:choose>
+    				   			 <c:when test="${transaction.repeatingTransaction}">
+        			 			   Yes
+     				   			</c:when>
+     				  			<c:otherwise>
+    			       				No
+     						   	</c:otherwise>
+    						</c:choose>
+						</td>
+						<td>${transaction.note}</td>
 
                         <td class="actions">
                             <button
@@ -409,16 +413,15 @@
                                 data-transaction-date="${fn:substring(transaction.transactionDate, 0, 10)}"
                                 data-amount="${transaction.amount}"
                                 data-note="${transaction.note}">
-                                Redigera
+                                Edit
                             </button>
                         </td>
-
                     </tr>
                 </c:forEach>
             </table>
 
             <c:if test="${empty transactions}">
-                <p class="empty-state">Inga transaktioner hittades för valt konto.</p>
+                <p class="empty-state">No transactions were found for the selected account.</p>
             </c:if>
         </section>
 
@@ -433,23 +436,23 @@
 
     <div id="editTransactionModal" class="modal-backdrop" aria-hidden="true">
         <div class="modal">
-            <h3>Redigera transaktion</h3>
+            <h3>Edit transaction</h3>
             <form>
                 <div class="modal-grid">
                     <div class="modal-field">
-                        <label for="editCategoryName">Kategori</label>
+                        <label for="editCategoryName">Category</label>
                         <input type="text" id="editCategoryName" readonly>
                     </div>
                     <div class="modal-field">
-                        <label for="editTransactionDate">Datum</label>
+                        <label for="editTransactionDate">Date</label>
                         <input type="date" id="editTransactionDate">
                     </div>
                     <div class="modal-field">
-                        <label for="editAmount">Belopp</label>
+                        <label for="editAmount">Amount</label>
                         <input type="text" id="editAmount">
                     </div>
                     <div class="modal-field">
-                        <label for="editNote">Kommentar</label>
+                        <label for="editNote">Comment</label>
                         <textarea id="editNote"></textarea>
                     </div>
                 </div>
@@ -462,7 +465,7 @@
     </div>
 
     <footer>
-        <p></p>
+        <p>BranchBuds</p>
     </footer>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
