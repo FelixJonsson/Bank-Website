@@ -8,7 +8,7 @@
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
             <property name="hibernate.default_schema" value="dbo"/>
-            <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
+            <property name="hibernate.hbm2ddl.auto" value="none"/>
         </properties>
     </persistence-unit>
     
