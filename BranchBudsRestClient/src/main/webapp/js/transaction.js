@@ -68,10 +68,11 @@ if (!transactions || transactions.length === 0) {
 rows = "<tr><td colspan=\"5\">No transactions loaded.</td></tr>";
 } else {
 $.each(transactions, function(index, transaction) {
+var formattedDate = formatDate(transaction.transactionDate);
 rows += "<tr>" +
 "<td>" + transaction.id + "</td>" +
 "<td>" + transaction.categoryName + "</td>" +
-"<td>" + transaction.transactionDate + "</td>" +
+"<td>" + formattedDate + "</td>" +
 "<td>" + transaction.amount + "</td>" +
 "<td>" + transaction.note + "</td>" +
 "</tr>";
@@ -89,4 +90,11 @@ if (xhr && xhr.status) {
 return xhr.status;
 }
 return status;
+}
+
+function formatDate(value) {
+if (!value) {
+return "";
+}
+return value.substring(0, 10);
 }
