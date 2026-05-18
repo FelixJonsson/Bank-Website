@@ -381,8 +381,6 @@ footer {
 			<div>
 				<span class="overview-label">Demo user</span> <strong>${currentUser.userName}</strong>
 			</div>
-			<p class="toolbar-note">Authentication is outside the scope of
-				this demo.</p>
 		</section>
 
 
