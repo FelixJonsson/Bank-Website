@@ -505,6 +505,26 @@ footer {
 			</section>
 
 		</main>
+		
+				<c:if test="${currentAccount != null}">
+				<section class="panel panel-wide">
+					<h2>Financial Summary</h2>
+					<div class="summary-grid">
+						<div class="summary-box">
+							<span class="overview-label">Total Income</span>
+							<span class="overview-value" id="valTotalIncome">Laddar...</span>
+						</div>
+						<div class="summary-box">
+							<span class="overview-label">Total Expenses</span>
+							<span class="overview-value" id="valTotalExpenses">Laddar...</span>
+						</div>
+						<div class="summary-box">
+							<span class="overview-label">Recurring Expenses</span>
+							<span class="overview-value" id="valRecurringExpenses">Laddar...</span>
+						</div>
+					</div>
+				</section>
+			</c:if>
 
 		<div id="editTransactionModal" class="modal-backdrop"
 			aria-hidden="true">
@@ -538,7 +558,6 @@ footer {
 				</form>
 			</div>
 		</div>
-
 		<footer>
 			<p>BranchBuds</p>
 		</footer>
@@ -548,6 +567,52 @@ footer {
 		$(document)
 				.ready(
 						function() {
+							// -- HÄMTA FINANSIELL SAMMANSTÄLLNING --
+							<c:if test="${currentAccount != null}">
+								const accountId = ${currentAccount.accountId};
+								const contextPath = "${pageContext.request.contextPath}";
+
+								// 1. Hämta Total inkomst
+								$.ajax({
+									url: contextPath + "/Accounts/" + accountId + "/totalIncome",
+									method: "GET",
+									success: function(data) {
+										// Om din Java-kod skickar tillbaka ett JSON-objekt: data.totalIncome
+										// Om din Java-kod bara skickar tillbaka siffran direkt: data
+										let value = data.totalIncome !== undefined ? data.totalIncome : data;
+										$("#valTotalIncome").text(value + " kr");
+									},
+									error: function() {
+										$("#valTotalIncome").text("- kr");
+									}
+								});
+
+								// 2. Hämta Totala utgifter
+								$.ajax({
+									url: contextPath + "/Accounts/" + accountId + "/totalExpenses",
+									method: "GET",
+									success: function(data) {
+										let value = data.totalExpenses !== undefined ? data.totalExpenses : data;
+										$("#valTotalExpenses").text(value + " kr");
+									},
+									error: function() {
+										$("#valTotalExpenses").text("- kr");
+									}
+								});
+
+								// 3. Hämta Återkommande utgifter
+								$.ajax({
+									url: contextPath + "/Accounts/" + accountId + "/recurringExpenses",
+									method: "GET",
+									success: function(data) {
+										let value = data.recurringExpenses !== undefined ? data.recurringExpenses : data;
+										$("#valRecurringExpenses").text(value + " kr");
+									},
+									error: function() {
+										$("#valRecurringExpenses").text("- kr");
+									}
+								});
+							</c:if>
 							const modal = $("#editTransactionModal");
 							const categoryNameField = $("#editCategoryName");
 							const transactionDateField = $("#editTransactionDate");

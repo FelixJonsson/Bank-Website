@@ -216,11 +216,51 @@ public class SystemFacade implements SystemFacadeLocal {
         
         transactionEAO.updateTransaction(t);
     }
+	
+	public double calculateTotalIncome(int accountId) {
+		Account account = accountEAO.findAccount(accountId);
+	    double totalIncome = 0;
+
+	    for(Transaction t : account.getTransactions()) {
+	        if(t.getAmount() > 0) { 
+	            totalIncome += t.getAmount();
+	        }
+	    }
+	    return totalIncome;
+	}
 
 	@Override
-	public void updateTransaction(int transactionId, int newCategoryId, double newAmount) {
-		
-		
+	public double calculateTotalExpenses(int accountId) {
+	    Account account = accountEAO.findAccount(accountId);
+	    double totalExpenses = 0;
+
+	    if (account != null && account.getTransactions() != null) {
+	        
+	        for (Transaction t : account.getTransactions()) {
+	            
+	            if (t.getAmount() < 0) { 
+	                
+	                totalExpenses += Math.abs(t.getAmount());
+	            }
+	        }
+	    }
+	    return totalExpenses;
+	}
+
+	@Override
+	public double calculateRecurringExpenses(int accountId) {
+	    Account account = accountEAO.findAccount(accountId);
+	    double recurringExpenses = 0;
+
+	    if (account != null && account.getTransactions() != null) {
+	        for (Transaction t : account.getTransactions()) {
+	            
+	        	if (t.getAmount() < 0 && t.isRepeatingTransaction()) { 
+	        	    recurringExpenses += Math.abs(t.getAmount());
+	        	}
+	        }
+	    }
+	    return recurringExpenses;
 	}
 
 	@Override
@@ -228,6 +268,12 @@ public class SystemFacade implements SystemFacadeLocal {
 			String note, boolean repeatingTransaction) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void updateTransaction(int transactionId, int newCategoryId, double newAmount) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
