@@ -92,16 +92,36 @@ public class SystemFacade implements SystemFacadeLocal {
     }
     
     public User findCurrentUser() {
-        return this.findUser(CURRENT_USER_ID);
+        List<User> users = userEAO.getAllUsers();
+
+        if (users == null || users.isEmpty()) {
+            return null;
+        }
+
+        return users.get(0);
     }
 
     public Account findCurrentUserAccount() {
-        return this.findAccountForUser(CURRENT_USER_ID);
+        User currentUser = this.findCurrentUser();
+
+        if (currentUser == null) {
+            return null;
+        }
+
+        return this.findAccountForUser(currentUser.getUserId());
     }
 
+
     public List<Transaction> findTransactionsForCurrentUser() {
-        return this.findTransactionsForUser(CURRENT_USER_ID);
+        User currentUser = this.findCurrentUser();
+
+        if (currentUser == null) {
+            return null;
+        }
+
+        return this.findTransactionsForUser(currentUser.getUserId());
     }
+
 
     public Transaction createTransactionForCurrentUser(int categoryId, Timestamp transactionDate,
             BigDecimal amount, String note, boolean repeatingTransaction) {
