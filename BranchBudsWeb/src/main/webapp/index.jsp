@@ -269,7 +269,7 @@
 						<div class="modal-field">
 							<label>
 								<input type="checkbox" name="repeatingTransaction">
-								Repeating transaction
+								Repeating
 							</label>
 						</div>
 					</div>
