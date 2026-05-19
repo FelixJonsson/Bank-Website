@@ -65,15 +65,17 @@ function renderAccounts(accounts) {
 function renderTransactions(transactions) {
     var rows = "";
     if (!transactions || transactions.length === 0) {
-        rows = "<tr><td colspan=\"5\">No transactions loaded.</td></tr>";
+        rows = "<tr><td colspan=\"6\">No transactions loaded.</td></tr>";
     } else {
         $.each(transactions, function(index, transaction) {
             var formattedDate = formatDate(transaction.transactionDate);
+            var repeatingLabel = formatRepeating(transaction.repeatingTransaction);
             rows += "<tr>" +
                 "<td>" + transaction.id + "</td>" +
                 "<td>" + transaction.categoryName + "</td>" +
                 "<td>" + formattedDate + "</td>" +
                 "<td>" + transaction.amount + "</td>" +
+                "<td>" + repeatingLabel + "</td>" +
                 "<td>" + transaction.note + "</td>" +
                 "</tr>";
         });
@@ -97,4 +99,11 @@ function formatDate(value) {
         return "";
     }
     return value.substring(0, 10);
+}
+
+function formatRepeating(value) {
+    if (value === true || value === "true" || value === 1 || value === "1") {
+        return "Yes";
+    }
+    return "No";
 }

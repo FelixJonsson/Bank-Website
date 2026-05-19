@@ -7,8 +7,8 @@
 <script
 src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
 </script>
-<link rel="stylesheet" type="text/css" href="css/transaction.css?v=20260518b">
-<script src="js/transaction.js?v=20260518b"></script>
+<link rel="stylesheet" type="text/css" href="css/transaction.css?v=20260519b">
+<script src="js/transaction.js?v=20260519b"></script>
 <meta charset="ISO-8859-1">
 <title>BranchBuds Rest Client</title>
 </head>
@@ -54,11 +54,12 @@ Account Name:<br>
 <th>Category</th>
 <th>Date</th>
 <th>Amount</th>
+<th>Repeating</th>
 <th>Note</th>
 </tr>
 <tbody id="transactionsTableBody">
 <tr>
-<td colspan="5">No transactions loaded.</td>
+<td colspan="6">No transactions loaded.</td>
 </tr>
 </tbody>
 </table>
