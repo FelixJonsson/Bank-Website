@@ -1,10 +1,7 @@
 package isp.entity;
 
 import java.io.Serializable;
-
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PostLoad;
-
 import java.util.List;
 import jakarta.persistence.FetchType;
 import java.math.BigDecimal;
@@ -20,6 +17,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.PostUpdate;
+import jakarta.persistence.PreRemove;
 
 
 
@@ -121,17 +119,17 @@ public class Account implements Serializable {
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
     }
-    
+
     @PostUpdate
     public void logAccountUpdate() {
         System.out.println("LOG (Callback): Account '" + this.getAccountName() 
             + "' was updated in the database. New balance: " + this.getCurrentBalance());
     }
 
-    @PostLoad
-    public void logAccountLoaded() {
+    @PreRemove
+    public void logDeleteAccount() {
         System.out.println("LOG (Callback): Account '" + this.getAccountName() 
-            + "' (ID: " + this.getAccountId() + ") was loaded from the database.");
+            + "' is being deleted.");
     }
     
     
