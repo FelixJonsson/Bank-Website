@@ -659,7 +659,6 @@ footer {
 				</form>
 			</div>
 		</div>
-
 		<div id="addTransactionModal" class="modal-backdrop" aria-hidden="true">
 			<div class="modal">
 				<h3>Add transaction</h3>
@@ -703,7 +702,6 @@ footer {
 				</form>
 			</div>
 		</div>
-
 		<footer>
 			<p>BranchBuds</p>
 		</footer>
