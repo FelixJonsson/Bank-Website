@@ -143,20 +143,21 @@ public class SystemFacade implements SystemFacadeLocal {
     	Transaction transaction = this.findTransactionForCurrentUser(transactionId);
         Category category = categoryEAO.findCategory(categoryId);
 
-        if (transaction == null || transaction.getAccount() == null || category == null) {
+        if (transaction == null || transaction.getAccount() == null || category == null || amount == null) {
             return null;
         }
 
         Account account = transaction.getAccount();
         double oldAmount = transaction.getAmount();
+        BigDecimal normalizedAmount = normalizeAmountForCategory(category, amount);
 
         transaction.setCategory(category);
         transaction.setTransactionDate(transactionDate);
-        transaction.setAmount(amount.doubleValue());
+        transaction.setAmount(normalizedAmount.doubleValue());
         transaction.setNote(note);
         transaction.setRepeatingTransaction(repeatingTransaction);
 
-        BigDecimal difference = amount.subtract(BigDecimal.valueOf(oldAmount));
+        BigDecimal difference = normalizedAmount.subtract(BigDecimal.valueOf(oldAmount));
         account.setCurrentBalance(account.getCurrentBalance().add(difference));
         accountEAO.updateAccount(account);
 
@@ -243,11 +244,13 @@ public class SystemFacade implements SystemFacadeLocal {
             return null;
         }
 
-        Transaction transaction = new Transaction(account, category, transactionDate, amount.doubleValue(), note,
+        BigDecimal normalizedAmount = normalizeAmountForCategory(category, amount);
+
+        Transaction transaction = new Transaction(account, category, transactionDate, normalizedAmount.doubleValue(), note,
                 repeatingTransaction);
         Transaction createdTransaction = transactionEAO.createTransaction(transaction);
 
-        account.setCurrentBalance(account.getCurrentBalance().add(amount));
+        account.setCurrentBalance(account.getCurrentBalance().add(normalizedAmount));
         accountEAO.updateAccount(account);
 
         return createdTransaction;
@@ -264,15 +267,37 @@ public class SystemFacade implements SystemFacadeLocal {
 
         Account account = transaction.getAccount();
         BigDecimal oldAmount = BigDecimal.valueOf(transaction.getAmount());
-        BigDecimal updatedAmount = BigDecimal.valueOf(newAmount);
+        BigDecimal updatedAmount = normalizeAmountForCategory(category, BigDecimal.valueOf(newAmount));
 
         transaction.setCategory(category);
-        transaction.setAmount(newAmount);
+        transaction.setAmount(updatedAmount.doubleValue());
         transactionEAO.updateTransaction(transaction);
 
         BigDecimal difference = updatedAmount.subtract(oldAmount);
         account.setCurrentBalance(account.getCurrentBalance().add(difference));
         accountEAO.updateAccount(account);
 	}
+
+    private BigDecimal normalizeAmountForCategory(Category category, BigDecimal amount) {
+        BigDecimal absoluteAmount = amount.abs();
+
+        if (isExpenseCategory(category)) {
+            return absoluteAmount.negate();
+        }
+
+        return absoluteAmount;
+    }
+
+    private boolean isExpenseCategory(Category category) {
+        if (category == null || category.getCategoryType() == null) {
+            return false;
+        }
+
+        String categoryType = category.getCategoryType().trim();
+
+        return "expense".equalsIgnoreCase(categoryType)
+                || "expenses".equalsIgnoreCase(categoryType)
+                || "utgift".equalsIgnoreCase(categoryType);
+    }
 
 }
