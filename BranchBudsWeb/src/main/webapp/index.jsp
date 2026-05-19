@@ -101,8 +101,8 @@
 			<section class="panel panel-wide">
 				<div class="section-heading">
 					<h2>Transactions</h2>
-					<button type="button" class="action-button"
-						id="openAddTransactionButton">Add transaction</button>
+					<button type="button" class="action-button btn-primary" 
+					id="openAddTransactionButton">Add transaction</button>
 				</div>
 
 				<c:if test="${status == 'added'}">
@@ -150,25 +150,24 @@
 							<td>${transaction.note}</td>
 
 							<td class="actions">
-								<button type="button"
-									class="action-button edit-transaction-button"
-									data-transaction-id="${transaction.transactionId}"
-									data-category-id="${transaction.category.categoryId}"
-									data-category-name="${transaction.category.categoryName}"
-									data-transaction-date="${fn:substring(transaction.transactionDate, 0, 10)}"
-									data-amount="${transaction.amount}"
-									data-note="${transaction.note}"
-									data-repeating-transaction="${transaction.repeatingTransaction}">Edit</button>
-								<form class="inline-form"
-									action="${pageContext.request.contextPath}/MainViewServlet"
-									method="post"
-									onsubmit="return confirm('Delete this transaction?');">
-									<input type="hidden" name="action" value="deleteTransaction">
-									<input type="hidden" name="transactionId"
-										value="${transaction.transactionId}">
-									<button type="submit" class="action-button">Delete</button>
-								</form>
-									
+							    <button type="button"
+							        class="action-button btn-primary edit-transaction-button"
+							        data-transaction-id="${transaction.transactionId}"
+							        data-category-id="${transaction.category.categoryId}"
+							        data-category-name="${transaction.category.categoryName}"
+							        data-transaction-date="${fn:substring(transaction.transactionDate, 0, 10)}"
+							        data-amount="${transaction.amount}"
+							        data-note="${transaction.note}"
+							        data-repeating-transaction="${transaction.repeatingTransaction}">Edit</button>
+							        
+							    <form class="inline-form"
+							        action="${pageContext.request.contextPath}/MainViewServlet"
+							        method="post"
+							        onsubmit="return confirm('Delete this transaction?');">
+							        <input type="hidden" name="action" value="deleteTransaction">
+							        <input type="hidden" name="transactionId" value="${transaction.transactionId}">
+							        <button type="submit" class="action-button btn-destructive">Delete</button>
+							    </form>
 							</td>
 						</tr>
 					</c:forEach>
@@ -247,7 +246,7 @@
 						</div>
 					</div>
 					<div class="modal-actions">
-						<button type="submit" class="action-button modal-save">Save</button>
+						<button type="submit" class="action-button btn-primary">Save</button>
 						<button type="button" class="action-button modal-close"
 							id="closeEditModalButton">close</button>
 					</div>

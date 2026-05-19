@@ -220,10 +220,33 @@ th {
 	color: #1f2933;
 	font-size: 13px;
 	cursor: pointer;
+	transition: all 0.2s ease;
 }
 
 .action-button:hover {
 	background: #f8fafc;
+}
+
+.action-button.btn-primary {
+	background: #1f5f8b;
+	border-color: #1f5f8b;
+	color: #ffffff;
+}
+
+.action-button.btn-primary:hover {
+	background: #17496b;
+	border-color: #17496b;
+}
+
+.action-button.btn-destructive {
+	background: #dc2626; 
+	border-color: #dc2626;
+	color: #ffffff;
+}
+
+.action-button.btn-destructive:hover {
+	background: #b91c1c; 
+	border-color: #b91c1c;
 }
 
 .modal-backdrop {
