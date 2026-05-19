@@ -1,11 +1,8 @@
 package isp.entity;
 
-import java.io.Serializable;
-
-
+import java.io.Serializable; 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +16,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostRemove;
+import jakarta.persistence.PostUpdate;
 
 
 @Entity
@@ -126,17 +124,22 @@ public class Transaction implements Serializable {
         this.repeatingTransaction = repeatingTransaction;
     }
     
-    
     @PostPersist
     public void logNewTransaction() {
         System.out.println("LOG (Callback): A new transaction was created! ID: " 
-            + this.getTransactionId() + ", Category: " + this.getCategory().getCategoryName() 
-            + ", Amount: " + this.getAmount());
+            + this.getTransactionId() + ", Amount: " + this.getAmount());
+    }
+
+    @PostUpdate
+    public void logUpdatedTransaction() {
+        System.out.println("LOG (Callback): Transaction ID " + this.getTransactionId() 
+            + " was updated. Amount: " + this.getAmount());
     }
 
     @PostRemove
     public void logDeletedTransaction() {
-        System.out.println("LOG (Callback): Transaction with ID " + this.getTransactionId() + " was deleted.");
+        System.out.println("LOG (Callback): Transaction with ID " + this.getTransactionId() 
+            + " was deleted.");
     }
 
 }
