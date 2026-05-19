@@ -50,8 +50,7 @@ public class CategoryEAOImpl implements CategoryEAOLocal {
 
 	@Override
 	public Category findById(int newCategoryId) {
-		// TODO Auto-generated method stub
-		return null;
+		return em.find(Category.class, newCategoryId);
 	}
 
 }
