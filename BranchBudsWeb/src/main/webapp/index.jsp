@@ -49,8 +49,7 @@
 							</div>
 							<div class="overview-item">
 								<span class="overview-label">Balance</span> <span
-									class="overview-value">${currentAccount.currentBalance}
-									kr</span>
+									class="overview-value"><fmt:formatNumber value="${currentAccount.currentBalance}" maxFractionDigits="0"/> kr</span>
 							</div>
 						</c:if>
 					</div>
@@ -90,7 +89,7 @@
 					<div class="expense-bar-area">
 					<div class="expense-bar"
 					style="width: ${(entry.value / chartMax) * 100}%;">
-					${entry.value} kr
+					<fmt:formatNumber value="${entry.value}" maxFractionDigits="0"/> kr
 				</div>
 			</div>
 		</div>
@@ -142,7 +141,7 @@
 						<tr>
 							<td>${fn:substring(transaction.transactionDate, 0, 10)}</td>
 							<td>${transaction.category.categoryName}</td>
-							<td class="amount">${transaction.amount}</td>
+							<td class="amount"><fmt:formatNumber value="${transaction.amount}" maxFractionDigits="0"/> kr</td>
 							<td><c:choose>
 									<c:when test="${transaction.repeatingTransaction}">
         			 			   Yes
