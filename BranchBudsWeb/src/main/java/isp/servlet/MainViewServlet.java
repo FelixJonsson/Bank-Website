@@ -3,7 +3,9 @@ package isp.servlet;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
@@ -32,14 +34,60 @@ public class MainViewServlet extends HttpServlet {
 		User currentUser = systemFacade.findCurrentUser();
 		Account currentAccount = systemFacade.findCurrentUserAccount();
 		List<Transaction> transactions = systemFacade.findTransactionsForCurrentUser();
-	
 
+		Map<String, Double> spendingByCategory = new LinkedHashMap<>();
+		double maxCategorySpending = 0;
+
+		if (transactions != null) {
+			for (Transaction transaction : transactions) {
+				if (transaction.getAmount() < 0) {
+					String categoryName = transaction.getCategory().getCategoryName();
+					double expenseAmount = Math.abs(transaction.getAmount());
+
+					Double currentTotal = spendingByCategory.get(categoryName);
+					if (currentTotal == null) {
+						currentTotal = 0.0;
+					}
+
+					double newTotal = currentTotal + expenseAmount;
+					spendingByCategory.put(categoryName, newTotal);
+
+					if (newTotal > maxCategorySpending) {
+						maxCategorySpending = newTotal;
+					}
+					
+					int chartStep = (int) Math.ceil(maxCategorySpending / 3.0 / 1000.0) * 1000;
+
+					if (chartStep == 0) {
+						chartStep = 1000;
+					}
+
+					int chartMax = chartStep * 3;
+
+				}
+			}
+		}
+
+		int chartStep = (int) Math.ceil(maxCategorySpending / 3.0 / 1000.0) * 1000;
+
+		if (chartStep == 0) {
+			chartStep = 1000;
+		}
+
+		int chartMax = chartStep * 3;
+
+
+		
 		request.setAttribute("viewLoaded", Boolean.TRUE);
 		request.setAttribute("currentUser", currentUser);
 		request.setAttribute("currentAccount", currentAccount);
 		request.setAttribute("transactions", transactions);
 		request.setAttribute("categories", categories);
+		request.setAttribute("spendingByCategory", spendingByCategory);
+		request.setAttribute("maxCategorySpending", maxCategorySpending);
 		request.setAttribute("status", request.getParameter("status"));
+		request.setAttribute("chartMax", chartMax);
+		request.setAttribute("chartStep", chartStep);
 
 
 		request.getRequestDispatcher("/index.jsp").forward(request, response);
@@ -126,4 +174,3 @@ public class MainViewServlet extends HttpServlet {
 		}
 	}
 }
-

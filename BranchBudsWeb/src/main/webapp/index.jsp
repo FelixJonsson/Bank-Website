@@ -64,23 +64,39 @@
 				</c:choose>
 			</section>
 
-			<section class="panel">
-				<h2>Available categories</h2>
+<section class="panel">
+	<h2>Spending by category</h2>
 
-				<table>
-					<tr>
-						<th>Name</th>
-						<th>Type</th>
-					</tr>
+	<c:choose>
+		<c:when test="${empty spendingByCategory}">
+			<p class="empty-state">No expenses found.</p>
+		</c:when>
+		<c:otherwise>
+			<div class="expense-chart">
+				<div class="expense-scale">
+					<span>0 kr</span>
+					<span>${chartStep} kr</span>
+					<span>${chartStep * 2} kr</span>
+					<span>${chartMax} kr</span>
+				</div>
 
-					<c:forEach var="cat" items="${categories}">
-						<tr>
-							<td>${cat.categoryName}</td>
-							<td>${cat.categoryType}</td>
-						</tr>
-					</c:forEach>
-				</table>
-			</section>
+				<c:forEach var="entry" items="${spendingByCategory}">
+					<div class="expense-row">
+					<div class="expense-category">${entry.key}</div>
+					<div class="expense-bar-area">
+					<div class="expense-bar"
+					style="width: ${(entry.value / chartMax) * 100}%;">
+					${entry.value} kr
+				</div>
+			</div>
+		</div>
+
+				</c:forEach>
+			</div>
+		</c:otherwise>
+	</c:choose>
+</section>
+
 
 			<section class="panel panel-wide">
 				<div class="section-heading">
