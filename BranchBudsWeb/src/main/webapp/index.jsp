@@ -181,19 +181,19 @@
 			</section>
 				<c:if test="${currentAccount != null}">
 				<section class="panel panel-wide">
-					<h2>Financial Summary</h2>
+					<h2>Summary for Current Month</h2>
 					<div class="summary-grid">
 						<div class="summary-box">
-							<span class="overview-label">Total Income</span>
-							<span class="overview-value" id="valTotalIncome">Laddar...</span>
+							<span class="overview-label">Total Income This Month</span>
+							<span class="overview-value">${totalIncome} kr</span>
 						</div>
 						<div class="summary-box">
-							<span class="overview-label">Total Expenses</span>
-							<span class="overview-value" id="valTotalExpenses">Laddar...</span>
+							<span class="overview-label">Total Expenses This Month</span>
+							<span class="overview-value">${totalExpenses} kr</span>
 						</div>
 						<div class="summary-box">
 							<span class="overview-label">Recurring Expenses</span>
-							<span class="overview-value" id="valRecurringExpenses">Laddar...</span>
+							<span class="overview-value">${recurringExpenses} kr</span>
 						</div>
 					</div>
 				</section>
@@ -306,52 +306,6 @@
 		$(document)
 				.ready(
 						function() {
-						
-								<c:if test="${currentAccount != null}">
-								    const accountId = ${currentAccount.accountId};
-								    
-								    const baseUrl = "${pageContext.request.contextPath}/Accounts/" + accountId;
-								
-								    $.ajax({
-								        url: baseUrl + "/totalIncome",
-								        method: "GET",
-								        success: function(data) {
-								            let value = data.totalIncome !== undefined ? data.totalIncome : data;
-								            $("#valTotalIncome").text(value + " kr");
-								        },
-								        error: function(xhr, status, error) {
-								            console.error("Inkomst-fel: URL = " + baseUrl + "/totalIncome");
-								            console.error("Statuskod: " + xhr.status + " " + error);
-								            $("#valTotalIncome").text("- kr");
-								        }
-								    });
-								
-								    $.ajax({
-								        url: baseUrl + "/totalExpenses",
-								        method: "GET",
-								        success: function(data) {
-								            let value = data.totalExpenses !== undefined ? data.totalExpenses : data;
-								            $("#valTotalExpenses").text(value + " kr");
-								        },
-								        error: function(xhr, status, error) {
-								            console.error("Utgifts-fel:", xhr.status, error);
-								            $("#valTotalExpenses").text("- kr");
-								        }
-								    });
-								
-								    $.ajax({
-								        url: baseUrl + "/recurringExpenses",
-								        method: "GET",
-								        success: function(data) {
-								            let value = data.recurringExpenses !== undefined ? data.recurringExpenses : data;
-								            $("#valRecurringExpenses").text(value + " kr");
-								        },
-								        error: function(xhr, status, error) {
-								            console.error("Återkommande-fel:", xhr.status, error);
-								            $("#valRecurringExpenses").text("- kr");
-								        }
-								    });
-								</c:if>
 							const modal = $("#editTransactionModal");
 							const addModal = $("#addTransactionModal");
 							const categoryIdField = $("#editCategoryId");

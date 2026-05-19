@@ -2,6 +2,7 @@ package isp.facade;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.YearMonth;
 import java.util.List;
 
 import jakarta.ejb.EJB;
@@ -193,7 +194,7 @@ public class SystemFacade implements SystemFacadeLocal {
 	    }
 
 	    for(Transaction t : account.getTransactions()) {
-	        if(t.getAmount() > 0) { 
+	        if(t.getAmount() > 0 && (isTransactionInCurrentMonth(t) || t.isRepeatingTransaction())) { 
 	            totalIncome += t.getAmount();
 	        }
 	    }
@@ -209,7 +210,8 @@ public class SystemFacade implements SystemFacadeLocal {
 	        
 	        for (Transaction t : account.getTransactions()) {
 	            
-	            if (t.getAmount() < 0) { 
+	            if (t.getAmount() < 0
+	                    && (isTransactionInCurrentMonth(t) || t.isRepeatingTransaction())) { 
 	                
 	                totalExpenses += Math.abs(t.getAmount());
 	            }
@@ -299,6 +301,17 @@ public class SystemFacade implements SystemFacadeLocal {
         return "expense".equalsIgnoreCase(categoryType)
                 || "expenses".equalsIgnoreCase(categoryType)
                 || "utgift".equalsIgnoreCase(categoryType);
+    }
+
+    private boolean isTransactionInCurrentMonth(Transaction transaction) {
+        if (transaction == null || transaction.getTransactionDate() == null) {
+            return false;
+        }
+
+        YearMonth currentMonth = YearMonth.now();
+        YearMonth transactionMonth = YearMonth.from(transaction.getTransactionDate().toLocalDateTime());
+
+        return currentMonth.equals(transactionMonth);
     }
 
 }
