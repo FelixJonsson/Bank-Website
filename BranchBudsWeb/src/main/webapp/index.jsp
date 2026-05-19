@@ -49,8 +49,7 @@
 							</div>
 							<div class="overview-item">
 								<span class="overview-label">Balance</span> <span
-									class="overview-value">${currentAccount.currentBalance}
-									kr</span>
+									class="overview-value"><fmt:formatNumber value="${currentAccount.currentBalance}" maxFractionDigits="0"/> kr</span>
 							</div>
 						</c:if>
 					</div>
@@ -69,32 +68,25 @@
 			</section>
 
 <section class="panel">
-	<h2>Spending by category</h2>
+	<h2>${spendingChartHeading}</h2>
 
 	<c:choose>
 		<c:when test="${empty spendingByCategory}">
 			<p class="empty-state">No expenses found.</p>
 		</c:when>
 		<c:otherwise>
-			<div class="expense-chart">
-				<div class="expense-scale">
-					<span>0 kr</span>
-					<span>${chartStep} kr</span>
-					<span>${chartStep * 2} kr</span>
-					<span>${chartMax} kr</span>
-				</div>
-
+			<div class="expense-list">
 				<c:forEach var="entry" items="${spendingByCategory}">
-					<div class="expense-row">
-					<div class="expense-category">${entry.key}</div>
-					<div class="expense-bar-area">
-					<div class="expense-bar"
-					style="width: ${(entry.value / chartMax) * 100}%;">
-					${entry.value} kr
-				</div>
-			</div>
-		</div>
-
+					<div class="expense-item">
+						<div class="expense-item-label">${entry.key}</div>
+						<div class="expense-item-row">
+							<div class="expense-track">
+								<div class="expense-fill"
+									style="width: ${(entry.value / chartMax) * 100}%;"></div>
+							</div>
+							<div class="expense-item-value"><fmt:formatNumber value="${entry.value}" maxFractionDigits="0"/> kr</div>
+						</div>
+					</div>
 				</c:forEach>
 			</div>
 		</c:otherwise>
@@ -142,7 +134,7 @@
 						<tr>
 							<td>${fn:substring(transaction.transactionDate, 0, 10)}</td>
 							<td>${transaction.category.categoryName}</td>
-							<td class="amount">${transaction.amount}</td>
+							<td class="amount"><fmt:formatNumber value="${transaction.amount}" maxFractionDigits="0"/> kr</td>
 							<td><c:choose>
 									<c:when test="${transaction.repeatingTransaction}">
         			 			   Yes
