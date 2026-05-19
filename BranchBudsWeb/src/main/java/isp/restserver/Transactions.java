@@ -112,7 +112,7 @@ public class Transactions extends HttpServlet {
                 payload.transactionDate,
                 payload.amount,
                 payload.note,
-                false
+                payload.repeatingTransaction
             );
             sendAsJson(response, transaction);
             return;
@@ -147,7 +147,7 @@ public class Transactions extends HttpServlet {
                 payload.transactionDate,
                 payload.amount,
                 payload.note,
-                false
+                payload.repeatingTransaction
             );
             sendAsJson(response, transaction);
         } catch (NumberFormatException e) {
@@ -168,6 +168,7 @@ public class Transactions extends HttpServlet {
             object.add("categoryName", transaction.getCategory().getCategoryName());
             object.add("transactionDate", transaction.getTransactionDate().toLocalDateTime().toString());
             object.add("amount", String.valueOf(transaction.getAmount()));
+            object.add("repeatingTransaction", transaction.isRepeatingTransaction());
             object.add("note", transaction.getNote() == null ? "" : transaction.getNote());
             out.print(object.build());
         } else {
@@ -192,6 +193,7 @@ public class Transactions extends HttpServlet {
                 object.add("categoryName", transaction.getCategory().getCategoryName());
                 object.add("transactionDate", transaction.getTransactionDate().toLocalDateTime().toString());
                 object.add("amount", String.valueOf(transaction.getAmount()));
+                object.add("repeatingTransaction", transaction.isRepeatingTransaction());
                 object.add("note", transaction.getNote() == null ? "" : transaction.getNote());
                 array.add(object);
             }
@@ -213,6 +215,8 @@ public class Transactions extends HttpServlet {
         payload.transactionDate = parseTimestamp(jsonRoot.getString("transactionDate"));
         payload.amount = new BigDecimal(jsonRoot.getString("amount"));
         payload.note = jsonRoot.containsKey("note") ? jsonRoot.getString("note") : "";
+        payload.repeatingTransaction = jsonRoot.containsKey("repeatingTransaction")
+                && jsonRoot.getBoolean("repeatingTransaction");
         return payload;
     }
 
@@ -225,5 +229,6 @@ public class Transactions extends HttpServlet {
         private Timestamp transactionDate;
         private BigDecimal amount;
         private String note;
+        private boolean repeatingTransaction;
     }
 }
