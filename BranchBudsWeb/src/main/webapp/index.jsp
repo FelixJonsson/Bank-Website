@@ -64,40 +64,47 @@
 				</c:choose>
 			</section>
 
-<section class="panel">
-	<h2>Spending by category</h2>
-
-	<c:choose>
-		<c:when test="${empty spendingByCategory}">
-			<p class="empty-state">No expenses found.</p>
-		</c:when>
-		<c:otherwise>
-			<div class="expense-chart">
-				<div class="expense-scale">
-					<span>0 kr</span>
-					<span>${chartStep} kr</span>
-					<span>${chartStep * 2} kr</span>
-					<span>${chartMax} kr</span>
-				</div>
-
-				<c:forEach var="entry" items="${spendingByCategory}">
-					<div class="expense-row">
-					<div class="expense-category">${entry.key}</div>
-					<div class="expense-bar-area">
-					<div class="expense-bar"
-					style="width: ${(entry.value / chartMax) * 100}%;">
-					${entry.value} kr
-				</div>
-			</div>
-		</div>
-
-				</c:forEach>
-			</div>
-		</c:otherwise>
-	</c:choose>
-</section>
-
-
+				<section class="panel">
+					<h2>Spending by category</h2>
+				
+					<c:choose>
+						<c:when test="${empty spendingByCategory}">
+							<p class="empty-state">No expenses found.</p>
+						</c:when>
+						<c:otherwise>
+							<div class="vertical-chart-container">
+								
+								<div class="y-axis">
+									<span>${chartMax} kr</span>
+									<span>${chartStep * 2} kr</span>
+									<span>${chartStep} kr</span>
+									<span>0 kr</span>
+								</div>
+				
+								<div class="bars-container">
+									
+									<div class="grid-lines">
+										<div class="grid-line"></div>
+										<div class="grid-line"></div>
+										<div class="grid-line"></div>
+										<div class="grid-line"></div>
+									</div>
+				
+									<c:forEach var="entry" items="${spendingByCategory}">
+										<div class="bar-column">
+											<div class="bar-track">
+												<div class="bar-fill" style="height: ${(entry.value / chartMax) * 100}%;"></div>
+											</div>
+											<div class="bar-label">${entry.key}</div>
+										</div>
+									</c:forEach>
+									
+								</div>
+							</div>
+						</c:otherwise>
+					</c:choose>
+				</section>
+				
 			<section class="panel panel-wide">
 				<div class="section-heading">
 					<h2>Transactions</h2>
