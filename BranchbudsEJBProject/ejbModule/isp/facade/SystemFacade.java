@@ -20,8 +20,6 @@ import isp.entity.User;
 @Stateless
 public class SystemFacade implements SystemFacadeLocal {
 	
-	private static final int CURRENT_USER_ID = 1; // user with ID 1 is the current user for demonstration purposes
-	
 	@EJB
 	private TransactionEAOLocal transactionEAO; 
 	
@@ -122,28 +120,6 @@ public class SystemFacade implements SystemFacadeLocal {
         return this.findTransactionsForUser(currentUser.getUserId());
     }
 
-
-    public Transaction createTransactionForCurrentUser(int categoryId, Timestamp transactionDate,
-            double amount, String note, boolean repeatingTransaction) {
-
-        Account account = this.findCurrentUserAccount();
-        Category category = categoryEAO.findCategory(categoryId);
-
-        if (account == null || category == null) {
-            return null;
-        }
-
-        // Apply the transaction amount to the account balance after the transaction is saved.
-        Transaction transaction = new Transaction(account, category, transactionDate, amount, note, repeatingTransaction);
-        Transaction createdTransaction = transactionEAO.createTransaction(transaction);
-
-        account.setCurrentBalance(account.getCurrentBalance().add(BigDecimal.valueOf(amount)));
-        accountEAO.updateAccount(account);
-
-        return createdTransaction;
-
-    }
-    
     public void deleteTransactionForCurrentUser(int transactionId) {
     	Transaction transaction = this.findTransactionForCurrentUser(transactionId);
 
@@ -206,20 +182,13 @@ public class SystemFacade implements SystemFacadeLocal {
         return userEAO.getAllUsers();
     }
 
-    public void updateTransaction(int transactionId, String newDesc, double newAmount, int newCategoryId) {
-        Transaction t = transactionEAO.findById(transactionId);
-        
-        Category c = categoryEAO.findById(newCategoryId);
-        
-        t.setAmount(newAmount);
-        t.setCategory(c);
-        
-        transactionEAO.updateTransaction(t);
-    }
-	
 	public double calculateTotalIncome(int accountId) {
 		Account account = accountEAO.findAccount(accountId);
 	    double totalIncome = 0;
+
+	    if (account == null || account.getTransactions() == null) {
+	    	return totalIncome;
+	    }
 
 	    for(Transaction t : account.getTransactions()) {
 	        if(t.getAmount() > 0) { 
@@ -266,14 +235,44 @@ public class SystemFacade implements SystemFacadeLocal {
 	@Override
 	public Transaction createTransactionForCurrentUser(int categoryId, Timestamp transactionDate, BigDecimal amount,
 			String note, boolean repeatingTransaction) {
-		// TODO Auto-generated method stub
-		return null;
+
+        Account account = this.findCurrentUserAccount();
+        Category category = categoryEAO.findCategory(categoryId);
+
+        if (account == null || category == null || amount == null) {
+            return null;
+        }
+
+        Transaction transaction = new Transaction(account, category, transactionDate, amount.doubleValue(), note,
+                repeatingTransaction);
+        Transaction createdTransaction = transactionEAO.createTransaction(transaction);
+
+        account.setCurrentBalance(account.getCurrentBalance().add(amount));
+        accountEAO.updateAccount(account);
+
+        return createdTransaction;
 	}
 
 	@Override
 	public void updateTransaction(int transactionId, int newCategoryId, double newAmount) {
-		// TODO Auto-generated method stub
-		
+        Transaction transaction = transactionEAO.findById(transactionId);
+        Category category = categoryEAO.findById(newCategoryId);
+
+        if (transaction == null || category == null || transaction.getAccount() == null) {
+            return;
+        }
+
+        Account account = transaction.getAccount();
+        BigDecimal oldAmount = BigDecimal.valueOf(transaction.getAmount());
+        BigDecimal updatedAmount = BigDecimal.valueOf(newAmount);
+
+        transaction.setCategory(category);
+        transaction.setAmount(newAmount);
+        transactionEAO.updateTransaction(transaction);
+
+        BigDecimal difference = updatedAmount.subtract(oldAmount);
+        account.setCurrentBalance(account.getCurrentBalance().add(difference));
+        accountEAO.updateAccount(account);
 	}
 
 }
