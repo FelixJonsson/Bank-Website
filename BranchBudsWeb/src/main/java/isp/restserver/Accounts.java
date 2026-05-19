@@ -1,9 +1,12 @@
 package isp.restserver;
 
 import java.io.IOException;
+
 import java.io.PrintWriter;
 import java.util.List;
-
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import isp.entity.Account;
 import isp.facade.SystemFacadeLocal;
 import jakarta.ejb.EJB;
@@ -16,6 +19,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 @WebServlet("/Accounts/*")
 public class Accounts extends HttpServlet {
@@ -36,15 +42,47 @@ public class Accounts extends HttpServlet {
         }
 
         String[] splits = pathInfo.split("/");
-        if (splits.length != 2) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
+        
+        if (splits.length == 2) {
+            try {
+                Account account = facade.findAccount(Integer.parseInt(splits[1]));
+                sendAsJson(response, account);
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            }
+        } 
+        else if (splits.length == 3) {
+            try {
+                int accountId = Integer.parseInt(splits[1]);
+                String action = splits[2]; 
+                
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                PrintWriter out = response.getWriter();
 
-        try {
-            Account account = facade.findAccount(Integer.parseInt(splits[1]));
-            sendAsJson(response, account);
-        } catch (NumberFormatException e) {
+                if (action.equals("totalIncome")) {
+                    double income = facade.calculateTotalIncome(accountId);
+                    out.print("{\"totalIncome\": " + income + "}");
+                } 
+                else if (action.equals("totalExpenses")) {
+                    double expenses = facade.calculateTotalExpenses(accountId);
+                    out.print("{\"totalExpenses\": " + expenses + "}");
+                } 
+                else if (action.equals("recurringExpenses")) {
+                    double recurring = facade.calculateRecurringExpenses(accountId);
+                    out.print("{\"recurringExpenses\": " + recurring + "}");
+                } 
+                else {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                }
+                out.flush();
+                
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            }
+        } 
+        
+        else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
@@ -89,4 +127,29 @@ public class Accounts extends HttpServlet {
 
         out.flush();
     }
+    
+
+ 	@GET
+ 	@Path("/{id}/totalIncome")
+ 	@Produces(MediaType.APPLICATION_JSON)
+ 	public Response getTotalIncome(@PathParam("id") int accountId) {
+ 		double income = facade.calculateTotalIncome(accountId); 
+ 		return Response.ok("{\"totalIncome\": " + income + "}").build();
+ 	}
+
+ 	@GET
+ 	@Path("/{id}/totalExpenses")
+ 	@Produces(MediaType.APPLICATION_JSON)
+ 	public Response getTotalExpenses(@PathParam("id") int accountId) {
+ 		double expenses = facade.calculateTotalExpenses(accountId);
+ 		return Response.ok("{\"totalExpenses\": " + expenses + "}").build();
+ 	}
+
+ 	@GET
+ 	@Path("/{id}/recurringExpenses")
+ 	@Produces(MediaType.APPLICATION_JSON)
+ 	public Response getRecurringExpenses(@PathParam("id") int accountId) {
+ 		double recurring = facade.calculateRecurringExpenses(accountId);
+ 		return Response.ok("{\"recurringExpenses\": " + recurring + "}").build();
+ 	}
 }
