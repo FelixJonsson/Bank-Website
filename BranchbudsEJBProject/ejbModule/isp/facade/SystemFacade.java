@@ -194,7 +194,7 @@ public class SystemFacade implements SystemFacadeLocal {
 	    }
 
 	    for(Transaction t : account.getTransactions()) {
-	        if(t.getAmount() > 0 && (isTransactionInCurrentMonth(t) || t.isRepeatingTransaction())) { 
+	        if(t.getAmount() > 0 && isTransactionInCurrentMonth(t)) { 
 	            totalIncome += t.getAmount();
 	        }
 	    }
@@ -210,8 +210,7 @@ public class SystemFacade implements SystemFacadeLocal {
 	        
 	        for (Transaction t : account.getTransactions()) {
 	            
-	            if (t.getAmount() < 0
-	                    && (isTransactionInCurrentMonth(t) || t.isRepeatingTransaction())) { 
+	            if (t.getAmount() < 0 && isTransactionInCurrentMonth(t)) { 
 	                
 	                totalExpenses += Math.abs(t.getAmount());
 	            }

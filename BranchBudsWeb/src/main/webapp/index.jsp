@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.core" prefix="c"%>
 <%@ taglib uri="jakarta.tags.functions" prefix="fn"%>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -183,19 +184,15 @@
 			</section>
 				<c:if test="${currentAccount != null}">
 				<section class="panel panel-wide">
-					<h2>Summary for Current Month</h2>
+					<h2>Summary This Month</h2>
 					<div class="summary-grid">
 						<div class="summary-box">
-							<span class="overview-label">Total Income This Month</span>
-							<span class="overview-value">${totalIncome} kr</span>
+							<span class="overview-label">Total Income</span>
+							<span class="overview-value"><fmt:formatNumber value="${totalIncome}" maxFractionDigits="0"/> kr</span>
 						</div>
 						<div class="summary-box">
-							<span class="overview-label">Total Expenses This Month</span>
-							<span class="overview-value">${totalExpenses} kr</span>
-						</div>
-						<div class="summary-box">
-							<span class="overview-label">Recurring Expenses</span>
-							<span class="overview-value">${recurringExpenses} kr</span>
+							<span class="overview-label">Total Expenses</span>
+							<span class="overview-value"><fmt:formatNumber value="${totalExpenses}" maxFractionDigits="0"/> kr</span>
 						</div>
 					</div>
 				</section>

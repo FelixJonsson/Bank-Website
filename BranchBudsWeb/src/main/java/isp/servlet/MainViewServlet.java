@@ -36,12 +36,10 @@ public class MainViewServlet extends HttpServlet {
 		List<Transaction> transactions = systemFacade.findTransactionsForCurrentUser();
 		double totalIncome = 0;
 		double totalExpenses = 0;
-		double recurringExpenses = 0;
 
 		if (currentAccount != null) {
 			totalIncome = systemFacade.calculateTotalIncome(currentAccount.getAccountId());
 			totalExpenses = systemFacade.calculateTotalExpenses(currentAccount.getAccountId());
-			recurringExpenses = systemFacade.calculateRecurringExpenses(currentAccount.getAccountId());
 		}
 
 		Map<String, Double> spendingByCategory = new LinkedHashMap<>();
@@ -99,7 +97,6 @@ public class MainViewServlet extends HttpServlet {
 		request.setAttribute("chartStep", chartStep);
 		request.setAttribute("totalIncome", totalIncome);
 		request.setAttribute("totalExpenses", totalExpenses);
-		request.setAttribute("recurringExpenses", recurringExpenses);
 
 
 		request.getRequestDispatcher("/index.jsp").forward(request, response);
