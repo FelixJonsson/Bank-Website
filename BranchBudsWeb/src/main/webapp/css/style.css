@@ -49,6 +49,7 @@ a:hover {
 	display: flex;
 	gap: 14px;
 	font-size: 14px;
+	margin-top: 62px;
 }
 
 .nav-links a {
@@ -157,10 +158,11 @@ a:hover {
 
 .overview-item {
 	padding: 12px 14px;
-	background: #f8fafc;
-	border: 1px solid #e4e7eb;
+	background: #d8edf5;
+	border: 1px solid #b1d4e0;
 	border-radius: 6px;
 }
+
 
 .overview-label {
 	display: block;
@@ -340,7 +342,7 @@ th {
 
 .summary-box {
 	padding: 20px;
-	background: #b1d4e0;
+	background: #d8edf5;
 	border: 1px solid #e4e7eb;
 	border-radius: 8px;
 	text-align: center;
@@ -414,7 +416,7 @@ footer {
 	margin-top: 24px;
 	text-align: center;
 	color: #7b8794;
-	font-size: 13px;
+	font-size: 16px;
 }
 
 .status-message {
@@ -609,5 +611,13 @@ footer {
 	line-height: 1.7;
 }
 
+.brand-link {
+	color: inherit;
+	text-decoration: none;
+}
+
+.brand-link:hover {
+	text-decoration: none;
+}
 
 
