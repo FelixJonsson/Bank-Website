@@ -8,12 +8,12 @@
 <body>
     <div class="page">
         <header class="topbar">
-            <div class="brand">
-                <img src="${pageContext.request.contextPath}/images/branchbuds-logo.png"
-                    alt="BranchBuds"
-                    class="brand-logo">
-                <p>Personal financial overview</p>
-            </div>
+            <a class="brand brand-link" href="${pageContext.request.contextPath}/MainViewServlet">
+	<img src="${pageContext.request.contextPath}/images/branchbuds-logo.png"
+		alt="BranchBuds"
+		class="brand-logo">
+	<p>Personal financial overview</p>
+</a>
             <nav class="nav-links">
                 <a href="${pageContext.request.contextPath}/MainViewServlet">Home</a>
                 <a href="${pageContext.request.contextPath}/about.jsp">About</a>
@@ -37,8 +37,8 @@
         </main>
 
         <footer>
-            <p>BranchBuds</p>
-        </footer>
+	<p>BranchBuds · <em>Track spending. Spot patterns. Grow your budget.</em> · 2026</p>
+</footer>
     </div>
 </body>
 </html>
