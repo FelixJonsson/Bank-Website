@@ -120,8 +120,8 @@
                 <p>Overview of users, accounts and transactions</p>
             </div>
             <nav class="nav-links">
-                <a href="${pageContext.request.contextPath}/MainViewServlet">Hem</a>
-                <a href="${pageContext.request.contextPath}/about.jsp">Om</a>
+                <a href="${pageContext.request.contextPath}/MainViewServlet">Home</a>
+                <a href="${pageContext.request.contextPath}/about.jsp">About</a>
             </nav>
         </header>
 
