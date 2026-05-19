@@ -17,6 +17,8 @@ import jakarta.persistence.Transient;
 import jakarta.persistence.Table;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostRemove;
 
 
 @Entity
@@ -124,5 +126,17 @@ public class Transaction implements Serializable {
         this.repeatingTransaction = repeatingTransaction;
     }
     
+    
+    @PostPersist
+    public void logNewTransaction() {
+        System.out.println("LOG (Callback): A new transaction was created! ID: " 
+            + this.getTransactionId() + ", Category: " + this.getCategory().getCategoryName() 
+            + ", Amount: " + this.getAmount());
+    }
+
+    @PostRemove
+    public void logDeletedTransaction() {
+        System.out.println("LOG (Callback): Transaction with ID " + this.getTransactionId() + " was deleted.");
+    }
 
 }

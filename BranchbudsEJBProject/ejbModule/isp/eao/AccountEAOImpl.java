@@ -1,6 +1,7 @@
 package isp.eao;
 
 import jakarta.ejb.Stateless;
+
 import java.util.List;
 
 import jakarta.persistence.TypedQuery;
@@ -90,5 +91,6 @@ public class AccountEAOImpl implements AccountEAOLocal {
 
         return results.get(0);
     }
+    
 
 }
