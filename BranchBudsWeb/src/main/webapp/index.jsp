@@ -217,6 +217,10 @@ th {
 	width: 1%;
 }
 
+.inline-form {
+	display: inline;
+}
+
 .action-button {
 	padding: 8px 12px;
 	border: 1px solid #bcccdc;
@@ -276,6 +280,15 @@ th {
 	padding: 10px 12px;
 	border: 1px solid #bcccdc;
 	border-radius: 6px;
+	font: inherit;
+}
+
+.modal-field select {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid #bcccdc;
+	border-radius: 6px;
+	background: #ffffff;
 	font: inherit;
 }
 
@@ -371,6 +384,31 @@ footer {
 	text-align: center;
 	color: #7b8794;
 	font-size: 13px;
+}
+
+.status-message {
+	margin: 0 0 16px;
+	padding: 12px 14px;
+	border-radius: 6px;
+	font-size: 14px;
+}
+
+.status-message.success {
+	background: #ecfdf3;
+	border: 1px solid #a7f3d0;
+	color: #166534;
+}
+
+.status-message.error {
+	background: #fef2f2;
+	border: 1px solid #fecaca;
+	color: #991b1b;
+}
+
+.status-message.delete {
+	background: #fef2f2;
+	border: 1px solid #fecaca;
+	color: #991b1b;
 }
 
 @media ( max-width : 800px) {
@@ -472,6 +510,25 @@ footer {
 						id="openAddTransactionButton">Add transaction</button>
 				</div>
 
+				<c:if test="${status == 'added'}">
+					<p class="status-message success">Transaction added.</p>
+				</c:if>
+				<c:if test="${status == 'addError'}">
+					<p class="status-message error">Could not add transaction.</p>
+				</c:if>
+				<c:if test="${status == 'updated'}">
+					<p class="status-message success">Transaction updated.</p>
+				</c:if>
+				<c:if test="${status == 'updateError'}">
+					<p class="status-message error">Could not update transaction.</p>
+				</c:if>
+				<c:if test="${status == 'deleted'}">
+					<p class="status-message delete">Transaction deleted.</p>
+				</c:if>
+				<c:if test="${status == 'deleteError'}">
+					<p class="status-message error">Could not delete transaction.</p>
+				</c:if>
+
 				<table>
 					<tr>
 						<th>Date</th>
@@ -505,13 +562,17 @@ footer {
 									data-category-name="${transaction.category.categoryName}"
 									data-transaction-date="${fn:substring(transaction.transactionDate, 0, 10)}"
 									data-amount="${transaction.amount}"
-									data-note="${transaction.note}">Edit</button>
-									<button
-								    type="button"
-    								class="action-button delete-transaction-button"
-    								data-transaction-id="${transaction.transactionId}">
-    								Delete
-									</button>
+									data-note="${transaction.note}"
+									data-repeating-transaction="${transaction.repeatingTransaction}">Edit</button>
+								<form class="inline-form"
+									action="${pageContext.request.contextPath}/MainViewServlet"
+									method="post"
+									onsubmit="return confirm('Delete this transaction?');">
+									<input type="hidden" name="action" value="deleteTransaction">
+									<input type="hidden" name="transactionId"
+										value="${transaction.transactionId}">
+									<button type="submit" class="action-button">Delete</button>
+								</form>
 									
 							</td>
 						</tr>
@@ -556,34 +617,93 @@ footer {
 			aria-hidden="true">
 			<div class="modal">
 				<h3>Edit transaction</h3>
-				<form>
-					<input type="hidden" id="editTransactionId">
+				<form action="${pageContext.request.contextPath}/MainViewServlet"
+					method="post">
+					<input type="hidden" name="action" value="updateTransaction">
+					<input type="hidden" id="editTransactionId" name="transactionId">
 					<div class="modal-grid">
 						<div class="modal-field">
-							<label for="editCategoryName">Category</label> <input type="text"
-								id="editCategoryName" readonly>
+							<label for="editCategoryId">Category</label>
+							<select id="editCategoryId" name="categoryId" required>
+								<option value="">Select category</option>
+								<c:forEach var="category" items="${categories}">
+									<option value="${category.categoryId}">${category.categoryName}</option>
+								</c:forEach>
+							</select>
 						</div>
 						<div class="modal-field">
 							<label for="editTransactionDate">Date</label> <input type="date"
-								id="editTransactionDate">
+								id="editTransactionDate" name="transactionDate" required>
 						</div>
 						<div class="modal-field">
-							<label for="editAmount">Amount</label> <input type="text"
-								id="editAmount">
+							<label for="editAmount">Amount</label> <input type="number"
+								id="editAmount" name="amount" step="0.01" required>
 						</div>
 						<div class="modal-field">
 							<label for="editNote">Comment</label>
-							<textarea id="editNote"></textarea>
+							<textarea id="editNote" name="note"></textarea>
+						</div>
+						<div class="modal-field">
+							<label>
+								<input type="checkbox" id="editRepeatingTransaction"
+									name="repeatingTransaction">
+								Repeating transaction
+							</label>
 						</div>
 					</div>
 					<div class="modal-actions">
-						<button type="button" class="action-button modal-save">Save</button>
+						<button type="submit" class="action-button modal-save">Save</button>
 						<button type="button" class="action-button modal-close"
 							id="closeEditModalButton">close</button>
 					</div>
 				</form>
 			</div>
 		</div>
+
+		<div id="addTransactionModal" class="modal-backdrop" aria-hidden="true">
+			<div class="modal">
+				<h3>Add transaction</h3>
+				<form action="${pageContext.request.contextPath}/MainViewServlet"
+					method="post">
+					<input type="hidden" name="action" value="addTransaction">
+					<div class="modal-grid">
+						<div class="modal-field">
+							<label for="addCategoryId">Category</label>
+							<select id="addCategoryId" name="categoryId" required>
+								<option value="">Select category</option>
+								<c:forEach var="category" items="${categories}">
+									<option value="${category.categoryId}">${category.categoryName}</option>
+								</c:forEach>
+							</select>
+						</div>
+						<div class="modal-field">
+							<label for="addTransactionDate">Date</label>
+							<input type="date" id="addTransactionDate" name="transactionDate" required>
+						</div>
+						<div class="modal-field">
+							<label for="addAmount">Amount</label>
+							<input type="number" id="addAmount" name="amount" step="0.01" required>
+						</div>
+						<div class="modal-field">
+							<label for="addNote">Comment</label>
+							<textarea id="addNote" name="note"></textarea>
+						</div>
+						<div class="modal-field">
+							<label>
+								<input type="checkbox" name="repeatingTransaction">
+								Repeating transaction
+							</label>
+						</div>
+					</div>
+					<div class="modal-actions">
+						<button type="submit" class="action-button modal-save">Save</button>
+						<button type="button" class="action-button modal-close"
+							id="closeAddModalButton">Close</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
 		<footer>
 			<p>BranchBuds</p>
 		</footer>
@@ -640,10 +760,20 @@ footer {
 								    });
 								</c:if>
 							const modal = $("#editTransactionModal");
-							const categoryNameField = $("#editCategoryName");
+							const addModal = $("#addTransactionModal");
+							const categoryIdField = $("#editCategoryId");
 							const transactionDateField = $("#editTransactionDate");
 							const amountField = $("#editAmount");
 							const noteField = $("#editNote");
+							const repeatingTransactionField = $("#editRepeatingTransaction");
+
+							$("#openAddTransactionButton").on("click", function() {
+								addModal.addClass("is-open").attr("aria-hidden", "false");
+							});
+
+							$("#closeAddModalButton").on("click", function() {
+								addModal.removeClass("is-open").attr("aria-hidden", "true");
+							});
 
 							$(".edit-transaction-button").on(
 									"click",
@@ -652,56 +782,19 @@ footer {
 
 										$("#editTransactionId").val(
 												button.data("transaction-id"));
-										categoryNameField.val(button
-												.data("category-name"));
+										categoryIdField.val(button
+												.data("category-id"));
 										transactionDateField.val(button
 												.data("transaction-date"));
 										amountField.val(button.data("amount"));
 										noteField.val(button.data("note"));
+										repeatingTransactionField.prop("checked",
+												button.data("repeating-transaction") === true
+														|| button.data("repeating-transaction") === "true");
 
 										modal.addClass("is-open").attr(
 												"aria-hidden", "false");
 									});
-
-							$(".modal-save")
-									.on(
-											"click",
-											function() {
-												const transactionId = $(
-														"#editTransactionId")
-														.val();
-												const editButton = $(".edit-transaction-button[data-transaction-id='"
-														+ transactionId + "']");
-
-												$
-														.ajax({
-															url : "${pageContext.request.contextPath}/Transactions/"
-																	+ transactionId,
-															method : "PUT",
-															contentType : "application/json",
-															data : JSON
-																	.stringify({
-																		categoryId : editButton
-																				.data(
-																						"category-id")
-																				.toString(),
-																		transactionDate : transactionDateField
-																				.val()
-																				+ "T00:00:00",
-																		amount : amountField
-																				.val(),
-																		note : noteField
-																				.val()
-																	}),
-															success : function() {
-																location
-																		.reload();
-															},
-															error : function() {
-																alert("Could not save transaction.");
-															}
-														});
-											});
 
 							$("#closeEditModalButton").on(
 									"click",
@@ -716,24 +809,12 @@ footer {
 											"aria-hidden", "true");
 								}
 							});
-							
-							$(".delete-transaction-button").on("click", function () {
-							    const transactionId = $(this).data("transaction-id");
 
-							    if (!confirm("Delete this transaction?")) {
-							        return;
-							    }
-
-							    $.ajax({
-							        url: "${pageContext.request.contextPath}/Transactions/" + transactionId,
-							        method: "DELETE",
-							        success: function () {
-							            location.reload();
-							        },
-							        error: function () {
-							            alert("Could not delete transaction.");
-							        }
-							    });
+							addModal.on("click", function(event) {
+								if (event.target === this) {
+									addModal.removeClass("is-open").attr(
+											"aria-hidden", "true");
+								}
 							});
 
 
