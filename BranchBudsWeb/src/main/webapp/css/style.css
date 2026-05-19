@@ -42,7 +42,7 @@ a:hover {
 .brand p {
 	margin: 0;
 	color: #52606d;
-	font-size: 14px;
+	font-size: 16px;
 }
 
 .nav-links {
@@ -239,8 +239,8 @@ th {
 }
 
 .action-button.btn-destructive {
-	background: #dc2626; 
-	border-color: #dc2626;
+	background: #cf5757; 
+	border-color: #cf5757;
 	color: #ffffff;
 }
 
@@ -563,6 +563,12 @@ footer {
 .expense-category {
 	font-weight: 700;
 	text-align: left;
+}
+
+.brand-logo {
+	display: block;
+	width: 300px;
+	height: auto;
 }
 
 
