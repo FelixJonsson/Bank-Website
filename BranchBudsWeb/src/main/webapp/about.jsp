@@ -21,19 +21,19 @@
         </header>
 
         <main>
-            <section class="panel">
-                <h2>About BranchBuds</h2>
-                <p class="about-copy">
-                    BranchBuds is a simple budgeting tool that brings users, accounts and transactions together in one clear interface. The goal is to make it easy to understand your finances and continue working with transactions in the same flow.
-                </p>
-                <div class="founder">
-                    <img src="${pageContext.request.contextPath}/founder-preview.png" alt="Founder of BranchBuds">
-                    <div class="founder-copy">
-                        <h3>Founder</h3>
-                        <p>This is the founder. He is locked in.</p>
-                    </div>
-                </div>
-            </section>
+            <section class="panel about-panel">
+	<h2>About BranchBuds</h2>
+	<h3>Meet the team!</h3>
+
+	<img src="${pageContext.request.contextPath}/images/team.png"
+		alt="BranchBuds team"
+		class="team-image">
+
+	<p class="about-copy">
+		BranchBuds is a simple budgeting tool that brings users, accounts and transactions together in one clear interface. The goal is to make it easy to understand your finances, track spending patterns and continue working with transactions in the same flow.
+	</p>
+</section>
+
         </main>
 
         <footer>

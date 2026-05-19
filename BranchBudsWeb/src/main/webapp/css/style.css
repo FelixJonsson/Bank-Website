@@ -572,4 +572,37 @@ footer {
 	text-decoration: none;
 }
 
+.about-panel {
+	text-align: center;
+}
+
+.about-panel h2 {
+	margin: 0 0 8px;
+	font-size: 28px;
+}
+
+.about-panel h3 {
+	margin: 0 0 24px;
+	color: #52606d;
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.team-image {
+	display: block;
+	width: 100%;
+	max-width: 640px;
+	margin: 0 auto 24px;
+	border-radius: 8px;
+	border: 1px solid #d8dee4;
+}
+
+.about-panel .about-copy {
+	max-width: 780px;
+	margin: 0 auto;
+	text-align: left;
+	color: #52606d;
+	line-height: 1.7;
+}
+
 
