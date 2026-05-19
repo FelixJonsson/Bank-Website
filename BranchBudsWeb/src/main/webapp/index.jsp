@@ -198,13 +198,21 @@
 					</div>
 				</section>
 			</c:if>
-			
+
 			<section class="panel panel-wide">
-				<div id="weatherBox">
-					<h3>Current Weather in Lund</h3>
-					<p id="weatherText">Loading weather...</p>
-				</div>
-			</section>
+	<div id="weatherBox" class="weather-layout">
+		<div>
+			<h3>Current Weather in Lund</h3>
+			<p id="weatherText">Loading weather...</p>
+		</div>
+		<img id="weatherImage"
+			src="${pageContext.request.contextPath}/images/sun_behind_clouds.png"
+			alt="Current weather"
+			class="weather-image">
+	</div>
+</section>
+
+
 
 		</main>
 		
@@ -434,6 +442,27 @@
 											const temp = Math
 													.round(data.main.temp);
 											const description = data.weather[0].description;
+											
+											const mainWeather = data.weather[0].main;
+											const descriptionLower = description.toLowerCase();
+
+											let weatherImage = "${pageContext.request.contextPath}/images/cloudy.png";
+
+											if (mainWeather === "Clear") {
+												weatherImage = "${pageContext.request.contextPath}/images/sunny.png";
+											} else if (mainWeather === "Rain" || mainWeather === "Drizzle" || mainWeather === "Thunderstorm") {
+												weatherImage = "${pageContext.request.contextPath}/images/rain.png";
+											} else if (mainWeather === "Clouds") {
+												if (descriptionLower.includes("overcast")) {
+													weatherImage = "${pageContext.request.contextPath}/images/cloudy.png";
+												} else {
+													weatherImage = "${pageContext.request.contextPath}/images/sun_behind_clouds.png";
+												}
+											}
+
+											$("#weatherImage").attr("src", weatherImage);
+
+
 
 											$("#weatherText")
 													.html(

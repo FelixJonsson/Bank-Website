@@ -370,6 +370,19 @@ th {
 	text-transform: capitalize;
 }
 
+.weather-layout {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 24px;
+}
+
+.weather-image {
+	width: 140px;
+	height: 140px;
+	object-fit: contain;
+}
+
 footer {
 	margin-top: 24px;
 	text-align: center;
