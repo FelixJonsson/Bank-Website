@@ -12,8 +12,11 @@
 	<div class="page">
 		<header class="topbar">
 			<div class="brand">
-				<h1>BranchBuds</h1>
-				<p>Personal financial overview</p>
+				<img src="${pageContext.request.contextPath}/images/branchbuds-logo.png"
+	alt="BranchBuds"
+	class="brand-logo">
+<p>Personal financial overview</p>
+
 			</div>
 			<nav class="nav-links">
 				<a href="${pageContext.request.contextPath}/MainViewServlet">Home</a>
