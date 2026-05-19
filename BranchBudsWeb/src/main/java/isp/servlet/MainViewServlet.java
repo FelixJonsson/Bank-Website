@@ -3,6 +3,10 @@ package isp.servlet;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.YearMonth;
+import java.time.format.TextStyle;
+import java.util.Comparator;
+import java.util.Locale;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +48,24 @@ public class MainViewServlet extends HttpServlet {
 
 		Map<String, Double> spendingByCategory = new LinkedHashMap<>();
 		double maxCategorySpending = 0;
+		YearMonth latestExpenseMonth = null;
 
 		if (transactions != null) {
 			for (Transaction transaction : transactions) {
 				if (transaction.getAmount() < 0) {
+					latestExpenseMonth = YearMonth.from(transaction.getTransactionDate().toLocalDateTime());
+					break;
+				}
+			}
+
+			for (Transaction transaction : transactions) {
+				if (transaction.getAmount() < 0) {
+					YearMonth transactionMonth = YearMonth.from(transaction.getTransactionDate().toLocalDateTime());
+
+					if (!transactionMonth.equals(latestExpenseMonth)) {
+						continue;
+					}
+
 					String categoryName = transaction.getCategory().getCategoryName();
 					double expenseAmount = Math.abs(transaction.getAmount());
 
@@ -62,27 +80,27 @@ public class MainViewServlet extends HttpServlet {
 					if (newTotal > maxCategorySpending) {
 						maxCategorySpending = newTotal;
 					}
-					
-					int chartStep = (int) Math.ceil(maxCategorySpending / 3.0 / 1000.0) * 1000;
-
-					if (chartStep == 0) {
-						chartStep = 1000;
-					}
-
-					int chartMax = chartStep * 3;
-
 				}
 			}
 		}
 
-		int chartStep = (int) Math.ceil(maxCategorySpending / 3.0 / 1000.0) * 1000;
+		Map<String, Double> sortedSpendingByCategory = new LinkedHashMap<>();
+		spendingByCategory.entrySet().stream()
+				.sorted(Map.Entry.<String, Double>comparingByValue(Comparator.reverseOrder()))
+				.forEachOrdered(entry -> sortedSpendingByCategory.put(entry.getKey(), entry.getValue()));
 
-		if (chartStep == 0) {
-			chartStep = 1000;
+		int chartStep = 2000;
+		int chartMax = chartStep;
+
+		if (maxCategorySpending > 0) {
+			chartMax = (int) Math.ceil(maxCategorySpending / chartStep) * chartStep;
 		}
 
-		int chartMax = chartStep * 3;
-
+		String spendingChartHeading = "Spending by category";
+		if (latestExpenseMonth != null) {
+			String monthName = latestExpenseMonth.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+			spendingChartHeading = "Spending by category for " + monthName + " " + latestExpenseMonth.getYear();
+		}
 
 		
 		request.setAttribute("viewLoaded", Boolean.TRUE);
@@ -90,11 +108,10 @@ public class MainViewServlet extends HttpServlet {
 		request.setAttribute("currentAccount", currentAccount);
 		request.setAttribute("transactions", transactions);
 		request.setAttribute("categories", categories);
-		request.setAttribute("spendingByCategory", spendingByCategory);
-		request.setAttribute("maxCategorySpending", maxCategorySpending);
+		request.setAttribute("spendingByCategory", sortedSpendingByCategory);
 		request.setAttribute("status", request.getParameter("status"));
 		request.setAttribute("chartMax", chartMax);
-		request.setAttribute("chartStep", chartStep);
+		request.setAttribute("spendingChartHeading", spendingChartHeading);
 		request.setAttribute("totalIncome", totalIncome);
 		request.setAttribute("totalExpenses", totalExpenses);
 
