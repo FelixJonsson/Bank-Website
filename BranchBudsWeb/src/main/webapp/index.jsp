@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.core" prefix="c"%>
 <%@ taglib uri="jakarta.tags.functions" prefix="fn"%>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,8 +13,11 @@
 	<div class="page">
 		<header class="topbar">
 			<div class="brand">
-				<h1>BranchBuds</h1>
-				<p>Personal financial overview</p>
+				<img src="${pageContext.request.contextPath}/images/branchbuds-logo.png"
+	alt="BranchBuds"
+	class="brand-logo">
+<p>Personal financial overview</p>
+
 			</div>
 			<nav class="nav-links">
 				<a href="${pageContext.request.contextPath}/MainViewServlet">Home</a>
@@ -45,8 +49,7 @@
 							</div>
 							<div class="overview-item">
 								<span class="overview-label">Balance</span> <span
-									class="overview-value">${currentAccount.currentBalance}
-									kr</span>
+									class="overview-value"><fmt:formatNumber value="${currentAccount.currentBalance}" maxFractionDigits="0"/> kr</span>
 							</div>
 						</c:if>
 					</div>
@@ -104,7 +107,7 @@
 						</c:otherwise>
 					</c:choose>
 				</section>
-				
+
 			<section class="panel panel-wide">
 				<div class="section-heading">
 					<h2>Transactions</h2>
@@ -145,7 +148,7 @@
 						<tr>
 							<td>${fn:substring(transaction.transactionDate, 0, 10)}</td>
 							<td>${transaction.category.categoryName}</td>
-							<td class="amount">${transaction.amount}</td>
+							<td class="amount"><fmt:formatNumber value="${transaction.amount}" maxFractionDigits="0"/> kr</td>
 							<td><c:choose>
 									<c:when test="${transaction.repeatingTransaction}">
         			 			   Yes
@@ -187,19 +190,15 @@
 			</section>
 				<c:if test="${currentAccount != null}">
 				<section class="panel panel-wide">
-					<h2>Summary for Current Month</h2>
+					<h2>Summary This Month</h2>
 					<div class="summary-grid">
 						<div class="summary-box">
-							<span class="overview-label">Total Income This Month</span>
-							<span class="overview-value">${totalIncome} kr</span>
+							<span class="overview-label">Total Income</span>
+							<span class="overview-value"><fmt:formatNumber value="${totalIncome}" maxFractionDigits="0"/> kr</span>
 						</div>
 						<div class="summary-box">
-							<span class="overview-label">Total Expenses This Month</span>
-							<span class="overview-value">${totalExpenses} kr</span>
-						</div>
-						<div class="summary-box">
-							<span class="overview-label">Recurring Expenses</span>
-							<span class="overview-value">${recurringExpenses} kr</span>
+							<span class="overview-label">Total Expenses</span>
+							<span class="overview-value"><fmt:formatNumber value="${totalExpenses}" maxFractionDigits="0"/> kr</span>
 						</div>
 					</div>
 				</section>
