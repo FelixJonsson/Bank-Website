@@ -97,4 +97,12 @@ function formatDate(value) {
         return "";
     }
     return value.substring(0, 10);
+
+}
+
+function formatDate(value) {
+    if (!value) {
+        return "";
+    }
+    return value.substring(0, 10);
 }

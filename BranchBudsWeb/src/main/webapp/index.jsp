@@ -318,6 +318,33 @@ th {
 	background: #17496b;
 }
 
+.summary-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 16px;
+}
+
+.summary-box {
+	padding: 20px;
+	background: #f8fafc;
+	border: 1px solid #e4e7eb;
+	border-radius: 8px;
+	text-align: center;
+}
+
+.summary-box .overview-label {
+	font-size: 13px;
+	color: #52606d;
+}
+
+.summary-box .overview-value {
+	display: block;
+	font-size: 28px;
+	font-weight: 700;
+	color: #1f5f8b; 
+	margin-top: 8px;
+}
+
 #weatherBox h3 {
 	margin: 0 0 12px;
 	font-size: 18px;
@@ -557,7 +584,26 @@ footer {
 						selected account.</p>
 				</c:if>
 			</section>
-
+				<c:if test="${currentAccount != null}">
+				<section class="panel panel-wide">
+					<h2>Financial Summary</h2>
+					<div class="summary-grid">
+						<div class="summary-box">
+							<span class="overview-label">Total Income</span>
+							<span class="overview-value" id="valTotalIncome">Laddar...</span>
+						</div>
+						<div class="summary-box">
+							<span class="overview-label">Total Expenses</span>
+							<span class="overview-value" id="valTotalExpenses">Laddar...</span>
+						</div>
+						<div class="summary-box">
+							<span class="overview-label">Recurring Expenses</span>
+							<span class="overview-value" id="valRecurringExpenses">Laddar...</span>
+						</div>
+					</div>
+				</section>
+			</c:if>
+			
 			<section class="panel panel-wide">
 				<div id="weatherBox">
 					<h3>Current Weather in Lund</h3>
@@ -566,7 +612,7 @@ footer {
 			</section>
 
 		</main>
-
+		
 		<div id="editTransactionModal" class="modal-backdrop"
 			aria-hidden="true">
 			<div class="modal">
@@ -608,12 +654,11 @@ footer {
 					<div class="modal-actions">
 						<button type="submit" class="action-button modal-save">Save</button>
 						<button type="button" class="action-button modal-close"
-							id="closeEditModalButton">Stäng</button>
+							id="closeEditModalButton">close</button>
 					</div>
 				</form>
 			</div>
 		</div>
-
 		<div id="addTransactionModal" class="modal-backdrop" aria-hidden="true">
 			<div class="modal">
 				<h3>Add transaction</h3>
@@ -657,7 +702,6 @@ footer {
 				</form>
 			</div>
 		</div>
-
 		<footer>
 			<p>BranchBuds</p>
 		</footer>
@@ -667,6 +711,52 @@ footer {
 		$(document)
 				.ready(
 						function() {
+						
+								<c:if test="${currentAccount != null}">
+								    const accountId = ${currentAccount.accountId};
+								    
+								    const baseUrl = "${pageContext.request.contextPath}/Accounts/" + accountId;
+								
+								    $.ajax({
+								        url: baseUrl + "/totalIncome",
+								        method: "GET",
+								        success: function(data) {
+								            let value = data.totalIncome !== undefined ? data.totalIncome : data;
+								            $("#valTotalIncome").text(value + " kr");
+								        },
+								        error: function(xhr, status, error) {
+								            console.error("Inkomst-fel: URL = " + baseUrl + "/totalIncome");
+								            console.error("Statuskod: " + xhr.status + " " + error);
+								            $("#valTotalIncome").text("- kr");
+								        }
+								    });
+								
+								    $.ajax({
+								        url: baseUrl + "/totalExpenses",
+								        method: "GET",
+								        success: function(data) {
+								            let value = data.totalExpenses !== undefined ? data.totalExpenses : data;
+								            $("#valTotalExpenses").text(value + " kr");
+								        },
+								        error: function(xhr, status, error) {
+								            console.error("Utgifts-fel:", xhr.status, error);
+								            $("#valTotalExpenses").text("- kr");
+								        }
+								    });
+								
+								    $.ajax({
+								        url: baseUrl + "/recurringExpenses",
+								        method: "GET",
+								        success: function(data) {
+								            let value = data.recurringExpenses !== undefined ? data.recurringExpenses : data;
+								            $("#valRecurringExpenses").text(value + " kr");
+								        },
+								        error: function(xhr, status, error) {
+								            console.error("Återkommande-fel:", xhr.status, error);
+								            $("#valRecurringExpenses").text("- kr");
+								        }
+								    });
+								</c:if>
 							const modal = $("#editTransactionModal");
 							const addModal = $("#addTransactionModal");
 							const categoryIdField = $("#editCategoryId");

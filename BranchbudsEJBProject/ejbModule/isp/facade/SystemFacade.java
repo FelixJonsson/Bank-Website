@@ -124,7 +124,7 @@ public class SystemFacade implements SystemFacadeLocal {
 
 
     public Transaction createTransactionForCurrentUser(int categoryId, Timestamp transactionDate,
-            BigDecimal amount, String note, boolean repeatingTransaction) {
+            double amount, String note, boolean repeatingTransaction) {
 
         Account account = this.findCurrentUserAccount();
         Category category = categoryEAO.findCategory(categoryId);
@@ -137,7 +137,7 @@ public class SystemFacade implements SystemFacadeLocal {
         Transaction transaction = new Transaction(account, category, transactionDate, amount, note, repeatingTransaction);
         Transaction createdTransaction = transactionEAO.createTransaction(transaction);
 
-        account.setCurrentBalance(account.getCurrentBalance().add(amount));
+        account.setCurrentBalance(account.getCurrentBalance().add(BigDecimal.valueOf(amount)));
         accountEAO.updateAccount(account);
 
         return createdTransaction;
@@ -153,7 +153,7 @@ public class SystemFacade implements SystemFacadeLocal {
         }
 
         Account account = transaction.getAccount();
-        account.setCurrentBalance(account.getCurrentBalance().subtract(transaction.getAmount()));
+        account.setCurrentBalance(account.getCurrentBalance().subtract(BigDecimal.valueOf(transaction.getAmount())));
         accountEAO.updateAccount(account);
 
         transactionEAO.deleteTransaction(transactionId);
@@ -172,15 +172,15 @@ public class SystemFacade implements SystemFacadeLocal {
         }
 
         Account account = transaction.getAccount();
-        BigDecimal oldAmount = transaction.getAmount();
+        double oldAmount = transaction.getAmount();
 
         transaction.setCategory(category);
         transaction.setTransactionDate(transactionDate);
-        transaction.setAmount(amount);
+        transaction.setAmount(amount.doubleValue());
         transaction.setNote(note);
         transaction.setRepeatingTransaction(repeatingTransaction);
 
-        BigDecimal difference = amount.subtract(oldAmount);
+        BigDecimal difference = amount.subtract(BigDecimal.valueOf(oldAmount));
         account.setCurrentBalance(account.getCurrentBalance().add(difference));
         accountEAO.updateAccount(account);
 
@@ -206,6 +206,74 @@ public class SystemFacade implements SystemFacadeLocal {
         return userEAO.getAllUsers();
     }
 
+    public void updateTransaction(int transactionId, String newDesc, double newAmount, int newCategoryId) {
+        Transaction t = transactionEAO.findById(transactionId);
+        
+        Category c = categoryEAO.findById(newCategoryId);
+        
+        t.setAmount(newAmount);
+        t.setCategory(c);
+        
+        transactionEAO.updateTransaction(t);
+    }
+	
+	public double calculateTotalIncome(int accountId) {
+		Account account = accountEAO.findAccount(accountId);
+	    double totalIncome = 0;
 
+	    for(Transaction t : account.getTransactions()) {
+	        if(t.getAmount() > 0) { 
+	            totalIncome += t.getAmount();
+	        }
+	    }
+	    return totalIncome;
+	}
+
+	@Override
+	public double calculateTotalExpenses(int accountId) {
+	    Account account = accountEAO.findAccount(accountId);
+	    double totalExpenses = 0;
+
+	    if (account != null && account.getTransactions() != null) {
+	        
+	        for (Transaction t : account.getTransactions()) {
+	            
+	            if (t.getAmount() < 0) { 
+	                
+	                totalExpenses += Math.abs(t.getAmount());
+	            }
+	        }
+	    }
+	    return totalExpenses;
+	}
+
+	@Override
+	public double calculateRecurringExpenses(int accountId) {
+	    Account account = accountEAO.findAccount(accountId);
+	    double recurringExpenses = 0;
+
+	    if (account != null && account.getTransactions() != null) {
+	        for (Transaction t : account.getTransactions()) {
+	            
+	        	if (t.getAmount() < 0 && t.isRepeatingTransaction()) { 
+	        	    recurringExpenses += Math.abs(t.getAmount());
+	        	}
+	        }
+	    }
+	    return recurringExpenses;
+	}
+
+	@Override
+	public Transaction createTransactionForCurrentUser(int categoryId, Timestamp transactionDate, BigDecimal amount,
+			String note, boolean repeatingTransaction) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateTransaction(int transactionId, int newCategoryId, double newAmount) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

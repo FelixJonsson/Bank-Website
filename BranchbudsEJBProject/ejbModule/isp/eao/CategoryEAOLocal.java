@@ -11,5 +11,6 @@ public interface CategoryEAOLocal {
     public Category updateCategory(Category category);
     public void deleteCategory(int id);
     public List<Category> findAllCategories();
+	public Category findById(int newCategoryId);
 
 }

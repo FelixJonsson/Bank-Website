@@ -1,9 +1,10 @@
 package isp.entity;
 
 import java.io.Serializable;
-
+import jakarta.persistence.OneToMany;
+import java.util.List;
+import jakarta.persistence.FetchType;
 import java.math.BigDecimal;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -48,6 +49,7 @@ public class Account implements Serializable {
     private String accountName;
     private String accountType;
     private BigDecimal currentBalance;
+    private List<Transaction> transactions;
 
     public Account() {
     }
@@ -105,5 +107,14 @@ public class Account implements Serializable {
 
     public void setCurrentBalance(BigDecimal currentBalance) {
         this.currentBalance = currentBalance;
+    }
+    
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 }
