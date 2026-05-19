@@ -334,7 +334,7 @@ th {
 
 .summary-grid {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(2, 1fr);
 	gap: 16px;
 }
 
@@ -575,6 +575,7 @@ footer {
 	height: auto;
 }
 
+
 .about-copy {
 	max-width: 760px;
 	margin: 0 0 24px;
@@ -607,5 +608,6 @@ footer {
 	color: #52606d;
 	line-height: 1.7;
 }
+
 
 
