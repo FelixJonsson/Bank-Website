@@ -18,6 +18,7 @@ import isp.entity.User;
 
 
 @Stateless
+@jakarta.interceptor.Interceptors(isp.interceptor.LoggingInterceptor.class)
 public class SystemFacade implements SystemFacadeLocal {
 	
 	@EJB
