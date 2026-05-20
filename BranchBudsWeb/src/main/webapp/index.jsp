@@ -315,6 +315,9 @@
 							const amountField = $("#editAmount");
 							const noteField = $("#editNote");
 							const repeatingTransactionField = $("#editRepeatingTransaction");
+							const today = new Date().toISOString().split('T')[0];
+						    $("#addTransactionDate").attr("max", today);
+						    $("#editTransactionDate").attr("max", today);
 
 							$("#openAddTransactionButton").on("click", function() {
 								addModal.addClass("is-open").attr("aria-hidden", "false");
