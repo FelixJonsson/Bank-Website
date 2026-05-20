@@ -1,6 +1,6 @@
 package isp.servlet;
 
-import java.io.IOException;
+import java.io.IOException; 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.YearMonth;
@@ -10,7 +10,8 @@ import java.util.Locale;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -125,6 +126,25 @@ public class MainViewServlet extends HttpServlet {
 
 		String action = request.getParameter("action");
 
+		if ("addTransaction".equals(action)) {
+		    String dateString = request.getParameter("transactionDate");
+		    LocalDate transactionDate;
+
+		    try {
+		        transactionDate = LocalDate.parse(dateString);
+		        LocalDate today = LocalDate.now();
+
+		        if (transactionDate.isAfter(today)) {
+		            request.setAttribute("status", "dateError"); 
+		            request.setAttribute("errorMessage", "Du kan inte lägga till transaktioner i framtiden.");
+		            request.getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
+		            return; 
+		        }
+
+		    } catch (DateTimeParseException e) {
+		    }
+		}
+		
 		if (action == null) {
 			response.sendRedirect(request.getContextPath() + "/MainViewServlet");
 			return;

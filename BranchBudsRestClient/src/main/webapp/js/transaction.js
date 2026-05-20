@@ -88,6 +88,16 @@ $(document).ready(function() {
     });
 });
 
+document.addEventListener("DOMContentLoaded", function() {
+    const today = new Date().toISOString().split('T')[0];
+    
+	const dateInput = document.getElementById("transactionDate");
+	    
+	    if (dateInput) {
+	        dateInput.setAttribute("max", today);
+			        }
+});
+
 function loadAccounts(preferredAccountId) {
     $.ajax({
         method: "GET",
