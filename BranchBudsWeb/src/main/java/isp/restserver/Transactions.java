@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -97,6 +98,23 @@ public class Transactions extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	
+    	String dateString = request.getParameter("transactionDate");
+    	
+    	try {
+            LocalDate transactionDate = LocalDate.parse(dateString);
+            LocalDate today = LocalDate.now();
+            if (transactionDate.isAfter(today)) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"error\": \"Du kan inte lägga till transaktioner i framtiden.\"}");
+                return; 
+            }
+
+
+        } catch (Exception e) {
+        }
 
         String pathInfo = request.getPathInfo();
         if (pathInfo == null || pathInfo.equals("/")) {

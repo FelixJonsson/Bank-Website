@@ -91,11 +91,11 @@ $(document).ready(function() {
 document.addEventListener("DOMContentLoaded", function() {
     const today = new Date().toISOString().split('T')[0];
     
-    const addDateInput = document.getElementById("addTransactionDate");
-    if (addDateInput) addDateInput.setAttribute("max", today);
-
-    const editDateInput = document.getElementById("editTransactionDate");
-    if (editDateInput) editDateInput.setAttribute("max", today);
+	const dateInput = document.getElementById("transactionDate");
+	    
+	    if (dateInput) {
+	        dateInput.setAttribute("max", today);
+			        }
 });
 
 function loadAccounts(preferredAccountId) {
