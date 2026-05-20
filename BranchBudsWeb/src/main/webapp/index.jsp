@@ -12,13 +12,13 @@
 <body>
 	<div class="page">
 		<header class="topbar">
-			<div class="brand">
-				<img src="${pageContext.request.contextPath}/images/branchbuds-logo.png"
-	alt="BranchBuds"
-	class="brand-logo">
-<p>Personal financial overview</p>
+			<a class="brand brand-link" href="${pageContext.request.contextPath}/MainViewServlet">
+	<img src="${pageContext.request.contextPath}/images/branchbuds-logo.png"
+		alt="BranchBuds"
+		class="brand-logo">
+	<p>Personal financial overview</p>
+</a>
 
-			</div>
 			<nav class="nav-links">
 				<a href="${pageContext.request.contextPath}/MainViewServlet">Home</a>
 				<a href="${pageContext.request.contextPath}/about.jsp">About</a>
@@ -67,46 +67,32 @@
 				</c:choose>
 			</section>
 
-				<section class="panel">
-					<h2>Spending by category</h2>
-				
-					<c:choose>
-						<c:when test="${empty spendingByCategory}">
-							<p class="empty-state">No expenses found.</p>
-						</c:when>
-						<c:otherwise>
-							<div class="vertical-chart-container">
-								
-								<div class="y-axis">
-									<span>${chartMax} kr</span>
-									<span>${chartStep * 2} kr</span>
-									<span>${chartStep} kr</span>
-									<span>0 kr</span>
-								</div>
-				
-								<div class="bars-container">
-									
-									<div class="grid-lines">
-										<div class="grid-line"></div>
-										<div class="grid-line"></div>
-										<div class="grid-line"></div>
-										<div class="grid-line"></div>
-									</div>
-				
-									<c:forEach var="entry" items="${spendingByCategory}">
-										<div class="bar-column">
-											<div class="bar-track">
-												<div class="bar-fill" style="height: ${(entry.value / chartMax) * 100}%;"></div>
-											</div>
-											<div class="bar-label">${entry.key}</div>
-										</div>
-									</c:forEach>
-									
-								</div>
+<section class="panel">
+	<h2>${spendingChartHeading}</h2>
+
+	<c:choose>
+		<c:when test="${empty spendingByCategory}">
+			<p class="empty-state">No expenses found.</p>
+		</c:when>
+		<c:otherwise>
+			<div class="expense-list">
+				<c:forEach var="entry" items="${spendingByCategory}">
+					<div class="expense-item">
+						<div class="expense-item-label">${entry.key}</div>
+						<div class="expense-item-row">
+							<div class="expense-track">
+								<div class="expense-fill"
+									style="width: ${(entry.value / chartMax) * 100}%;"></div>
 							</div>
-						</c:otherwise>
-					</c:choose>
-				</section>
+							<div class="expense-item-value"><fmt:formatNumber value="${entry.value}" maxFractionDigits="0"/> kr</div>
+						</div>
+					</div>
+				</c:forEach>
+			</div>
+		</c:otherwise>
+	</c:choose>
+</section>
+
 
 			<section class="panel panel-wide">
 				<div class="section-heading">
@@ -134,54 +120,56 @@
 					<p class="status-message error">Could not delete transaction.</p>
 				</c:if>
 
-				<table>
-					<tr>
-						<th>Date</th>
-						<th>Category</th>
-						<th>Amount</th>
-						<th>Repeating</th>
-						<th>Comment</th>
-						<th>Action</th>
-					</tr>
-
-					<c:forEach var="transaction" items="${transactions}">
+				<div class="transactions-table-wrap">
+					<table>
 						<tr>
-							<td>${fn:substring(transaction.transactionDate, 0, 10)}</td>
-							<td>${transaction.category.categoryName}</td>
-							<td class="amount"><fmt:formatNumber value="${transaction.amount}" maxFractionDigits="0"/> kr</td>
-							<td><c:choose>
-									<c:when test="${transaction.repeatingTransaction}">
-        			 			   Yes
-     				   			</c:when>
-									<c:otherwise>
-    			       				No
-     						   	</c:otherwise>
-								</c:choose></td>
-							<td>${transaction.note}</td>
-
-							<td class="actions">
-							    <button type="button"
-							        class="action-button btn-primary edit-transaction-button"
-							        data-transaction-id="${transaction.transactionId}"
-							        data-category-id="${transaction.category.categoryId}"
-							        data-category-name="${transaction.category.categoryName}"
-							        data-transaction-date="${fn:substring(transaction.transactionDate, 0, 10)}"
-							        data-amount="${transaction.amount}"
-							        data-note="${transaction.note}"
-							        data-repeating-transaction="${transaction.repeatingTransaction}">Edit</button>
-							        
-							    <form class="inline-form"
-							        action="${pageContext.request.contextPath}/MainViewServlet"
-							        method="post"
-							        onsubmit="return confirm('Delete this transaction?');">
-							        <input type="hidden" name="action" value="deleteTransaction">
-							        <input type="hidden" name="transactionId" value="${transaction.transactionId}">
-							        <button type="submit" class="action-button btn-destructive">Delete</button>
-							    </form>
-							</td>
+							<th>Date</th>
+							<th>Category</th>
+							<th>Amount</th>
+							<th>Repeating</th>
+							<th>Comment</th>
+							<th>Action</th>
 						</tr>
-					</c:forEach>
-				</table>
+
+						<c:forEach var="transaction" items="${transactions}">
+							<tr>
+								<td>${fn:substring(transaction.transactionDate, 0, 10)}</td>
+								<td>${transaction.category.categoryName}</td>
+								<td class="amount"><fmt:formatNumber value="${transaction.amount}" maxFractionDigits="0"/> kr</td>
+								<td><c:choose>
+										<c:when test="${transaction.repeatingTransaction}">
+	        			 			   Yes
+	     				   			</c:when>
+										<c:otherwise>
+	    			       				No
+	     						   	</c:otherwise>
+									</c:choose></td>
+								<td>${transaction.note}</td>
+
+								<td class="actions">
+								    <button type="button"
+								        class="action-button btn-primary edit-transaction-button"
+								        data-transaction-id="${transaction.transactionId}"
+								        data-category-id="${transaction.category.categoryId}"
+								        data-category-name="${transaction.category.categoryName}"
+								        data-transaction-date="${fn:substring(transaction.transactionDate, 0, 10)}"
+								        data-amount="${transaction.amount}"
+								        data-note="${transaction.note}"
+								        data-repeating-transaction="${transaction.repeatingTransaction}">Edit</button>
+								        
+								    <form class="inline-form"
+								        action="${pageContext.request.contextPath}/MainViewServlet"
+								        method="post"
+								        onsubmit="return confirm('Delete this transaction?');">
+								        <input type="hidden" name="action" value="deleteTransaction">
+								        <input type="hidden" name="transactionId" value="${transaction.transactionId}">
+								        <button type="submit" class="action-button btn-destructive">Delete</button>
+								    </form>
+								</td>
+							</tr>
+						</c:forEach>
+					</table>
+				</div>
 
 				<c:if test="${empty transactions}">
 					<p class="empty-state">No transactions were found for the
@@ -311,8 +299,9 @@
 			</div>
 		</div>
 		<footer>
-			<p>BranchBuds</p>
-		</footer>
+	<p>BranchBuds · <em>Track spending. Spot patterns. Grow your budget.</em> · 2026</p>
+</footer>
+
 	</div>
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script>

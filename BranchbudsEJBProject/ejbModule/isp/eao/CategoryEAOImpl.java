@@ -48,9 +48,4 @@ public class CategoryEAOImpl implements CategoryEAOLocal {
         return results;
     }
 
-	@Override
-	public Category findById(int newCategoryId) {
-		return em.find(Category.class, newCategoryId);
-	}
-
 }

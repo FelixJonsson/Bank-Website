@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import isp.entity.Category;
 import isp.entity.Transaction;
 import isp.facade.SystemFacadeLocal;
 import jakarta.ejb.EJB;
@@ -36,8 +37,7 @@ public class Transactions extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
         if (pathInfo == null || pathInfo.equals("/")) {
-            List<Transaction> allTransactions = facade.findTransactionsForCurrentUser();
-            sendAsJson(response, allTransactions);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
@@ -53,22 +53,17 @@ public class Transactions extends HttpServlet {
                 }
                 return;
             }
-            if (splits.length == 3 && "account-name".equals(splits[1])) {
-                List<Transaction> transactions = facade.findTransactionsForAccountName(splits[2]);
-                sendAsJson(response, transactions);
-                return;
-            }
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        try {
-            String id = splits[1];
-            Transaction transaction = facade.findTransactionForCurrentUser(Integer.parseInt(id));
-            sendAsJson(response, transaction);
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        if ("categories".equals(splits[1])) {
+            List<Category> categories = facade.findAllCategories();
+            sendCategoriesAsJson(response, categories);
+            return;
         }
+
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
     }
 
     @Override
@@ -89,9 +84,9 @@ public class Transactions extends HttpServlet {
 
         try {
             String id = splits[1];
-            Transaction transaction = facade.findTransactionForCurrentUser(Integer.parseInt(id));
+            Transaction transaction = facade.findTransactionById(Integer.parseInt(id));
             if (transaction != null) {
-                facade.deleteTransactionForCurrentUser(Integer.parseInt(id));
+                facade.deleteTransactionById(Integer.parseInt(id));
             }
             sendAsJson(response, transaction);
         } catch (NumberFormatException e) {
@@ -107,7 +102,8 @@ public class Transactions extends HttpServlet {
         if (pathInfo == null || pathInfo.equals("/")) {
             BufferedReader reader = request.getReader();
             TransactionPayload payload = parseJsonTransaction(reader);
-            Transaction transaction = facade.createTransactionForCurrentUser(
+            Transaction transaction = facade.createTransactionForAccount(
+                payload.accountId,
                 payload.categoryId,
                 payload.transactionDate,
                 payload.amount,
@@ -141,7 +137,7 @@ public class Transactions extends HttpServlet {
             String id = splits[1];
             BufferedReader reader = request.getReader();
             TransactionPayload payload = parseJsonTransaction(reader);
-            Transaction transaction = facade.updateTransactionForCurrentUser(
+            Transaction transaction = facade.updateTransactionById(
                 Integer.parseInt(id),
                 payload.categoryId,
                 payload.transactionDate,
@@ -163,7 +159,7 @@ public class Transactions extends HttpServlet {
 
         if (transaction != null) {
             JsonObjectBuilder object = Json.createObjectBuilder();
-            object.add("id", String.valueOf(transaction.getTransactionId()));
+            object.add("transactionId", String.valueOf(transaction.getTransactionId()));
             object.add("categoryId", String.valueOf(transaction.getCategory().getCategoryId()));
             object.add("categoryName", transaction.getCategory().getCategoryName());
             object.add("transactionDate", transaction.getTransactionDate().toLocalDateTime().toString());
@@ -188,7 +184,7 @@ public class Transactions extends HttpServlet {
             JsonArrayBuilder array = Json.createArrayBuilder();
             for (Transaction transaction : transactions) {
                 JsonObjectBuilder object = Json.createObjectBuilder();
-                object.add("id", String.valueOf(transaction.getTransactionId()));
+                object.add("transactionId", String.valueOf(transaction.getTransactionId()));
                 object.add("categoryId", String.valueOf(transaction.getCategory().getCategoryId()));
                 object.add("categoryName", transaction.getCategory().getCategoryName());
                 object.add("transactionDate", transaction.getTransactionDate().toLocalDateTime().toString());
@@ -206,11 +202,36 @@ public class Transactions extends HttpServlet {
         out.flush();
     }
 
+    private void sendCategoriesAsJson(HttpServletResponse response, List<Category> categories)
+            throws IOException {
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        if (categories != null) {
+            JsonArrayBuilder array = Json.createArrayBuilder();
+            for (Category category : categories) {
+                JsonObjectBuilder object = Json.createObjectBuilder();
+                object.add("categoryId", category.getCategoryId());
+                object.add("categoryName", category.getCategoryName());
+                object.add("categoryType", category.getCategoryType() == null ? "" : category.getCategoryType());
+                array.add(object);
+            }
+            JsonArray jsonArray = array.build();
+            out.print(jsonArray);
+        } else {
+            out.print("[]");
+        }
+
+        out.flush();
+    }
+
     private TransactionPayload parseJsonTransaction(BufferedReader reader) {
         JsonReader jsonReader = Json.createReader(reader);
         JsonObject jsonRoot = jsonReader.readObject();
 
         TransactionPayload payload = new TransactionPayload();
+        payload.accountId = Integer.parseInt(jsonRoot.getString("accountId"));
         payload.categoryId = Integer.parseInt(jsonRoot.getString("categoryId"));
         payload.transactionDate = parseTimestamp(jsonRoot.getString("transactionDate"));
         payload.amount = new BigDecimal(jsonRoot.getString("amount"));
@@ -225,6 +246,7 @@ public class Transactions extends HttpServlet {
     }
 
     private static class TransactionPayload {
+        private int accountId;
         private int categoryId;
         private Timestamp transactionDate;
         private BigDecimal amount;
