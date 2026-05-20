@@ -5,7 +5,6 @@ import jakarta.ejb.Stateless;
 import java.util.List;
 
 import jakarta.persistence.TypedQuery;
-import isp.entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import isp.entity.Account;
@@ -46,37 +45,7 @@ public class AccountEAOImpl implements AccountEAOLocal {
 
         return query.getResultList();
     }
-
-    public Account findAccountByName(String accountName) {
-        TypedQuery<Account> query =
-            em.createNamedQuery("Account.findByName", Account.class);
-
-        query.setParameter("accountName", accountName);
-
-        List<Account> results = query.getResultList();
-
-        if (results.isEmpty()) {
-            return null;
-        }
-
-        return results.get(0);
-    }
     
-    public Account findAccountByUser(User user) {
-        TypedQuery<Account> query =
-            em.createNamedQuery("Account.findByUser", Account.class);
-
-        query.setParameter("user", user);
-
-        List<Account> results = query.getResultList();
-
-        if (results.isEmpty()) {
-            return null;
-        }
-
-        return results.get(0);
-    }
-
     public Account findAccountByUserId(int userId) {
         TypedQuery<Account> query =
             em.createNamedQuery("Account.findByUserId", Account.class);

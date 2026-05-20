@@ -34,10 +34,6 @@ import jakarta.persistence.PreRemove;
     @NamedQuery(
         name = "Account.findByUserId",
         query = "SELECT a FROM Account a WHERE a.user.userId = :userId"
-    ),
-    @NamedQuery(
-        name = "Account.findByName",
-        query = "SELECT a FROM Account a WHERE a.accountName = :accountName"
     )
 })
 

@@ -39,39 +39,23 @@ public class SystemFacade implements SystemFacadeLocal {
     public SystemFacade() {
     }
     
-    public List<Transaction> findTransactionsByAccount(Account account) {
-        return transactionEAO.findTransactionsByAccount(account);
-    }
-    
     public List<Category> findAllCategories() {
         return categoryEAO.findAllCategories();
-    }
-    
-    public Account findAccountByUser(User user) {
-        return accountEAO.findAccountByUser(user);
     }
 
     public Account findAccount(int accountId) {
         return accountEAO.findAccount(accountId);
     }
 
-    public Account findAccountByName(String accountName) {
-        return accountEAO.findAccountByName(accountName);
-    }
-
     public List<Account> findAllAccounts() {
         return accountEAO.findAllAccounts();
     }
 
-    public User findUser(int userId) {
-        return userEAO.findUser(userId);
-    }
-
-    public Account findAccountForUser(int userId) {
+    private Account findAccountForUser(int userId) {
         return accountEAO.findAccountByUserId(userId);
     }
 
-    public List<Transaction> findTransactionsForUser(int userId) {
+    private List<Transaction> findTransactionsForUser(int userId) {
         return transactionEAO.findTransactionsByUserId(userId);
     }
 
@@ -83,12 +67,8 @@ public class SystemFacade implements SystemFacadeLocal {
         return transactionEAO.findTransactionsByAccount(account);
     }
 
-    public List<Transaction> findTransactionsForAccountName(String accountName) {
-        Account account = accountEAO.findAccountByName(accountName);
-        if (account == null) {
-            return null;
-        }
-        return transactionEAO.findTransactionsByAccount(account);
+    public Transaction findTransactionById(int transactionId) {
+        return transactionEAO.findTransaction(transactionId);
     }
     
     public User findCurrentUser() {
@@ -137,12 +117,53 @@ public class SystemFacade implements SystemFacadeLocal {
         transactionEAO.deleteTransaction(transactionId);
     }
 
+    public void deleteTransactionById(int transactionId) {
+        Transaction transaction = transactionEAO.findTransaction(transactionId);
+
+        if (transaction == null || transaction.getAccount() == null) {
+            return;
+        }
+
+        Account account = transaction.getAccount();
+        account.setCurrentBalance(account.getCurrentBalance().subtract(BigDecimal.valueOf(transaction.getAmount())));
+        accountEAO.updateAccount(account);
+
+        transactionEAO.deleteTransaction(transactionId);
+    }
+
     // Updates a transaction and adjusts the account balance by the difference between old and new amount.
 
     public Transaction updateTransactionForCurrentUser(int transactionId, int categoryId,
             Timestamp transactionDate, BigDecimal amount, String note, boolean repeatingTransaction) {
 
     	Transaction transaction = this.findTransactionForCurrentUser(transactionId);
+        Category category = categoryEAO.findCategory(categoryId);
+
+        if (transaction == null || transaction.getAccount() == null || category == null || amount == null) {
+            return null;
+        }
+
+        Account account = transaction.getAccount();
+        double oldAmount = transaction.getAmount();
+        BigDecimal normalizedAmount = normalizeAmountForCategory(category, amount);
+
+        transaction.setCategory(category);
+        transaction.setTransactionDate(transactionDate);
+        transaction.setAmount(normalizedAmount.doubleValue());
+        transaction.setNote(note);
+        transaction.setRepeatingTransaction(repeatingTransaction);
+
+        BigDecimal difference = normalizedAmount.subtract(BigDecimal.valueOf(oldAmount));
+        account.setCurrentBalance(account.getCurrentBalance().add(difference));
+        accountEAO.updateAccount(account);
+
+        return transactionEAO.updateTransaction(transaction);
+    }
+
+    public Transaction updateTransactionById(int transactionId, int categoryId,
+            Timestamp transactionDate, BigDecimal amount, String note, boolean repeatingTransaction) {
+
+        Transaction transaction = transactionEAO.findTransaction(transactionId);
         Category category = categoryEAO.findCategory(categoryId);
 
         if (transaction == null || transaction.getAccount() == null || category == null || amount == null) {
@@ -220,22 +241,6 @@ public class SystemFacade implements SystemFacadeLocal {
 	}
 
 	@Override
-	public double calculateRecurringExpenses(int accountId) {
-	    Account account = accountEAO.findAccount(accountId);
-	    double recurringExpenses = 0;
-
-	    if (account != null && account.getTransactions() != null) {
-	        for (Transaction t : account.getTransactions()) {
-	            
-	        	if (t.getAmount() < 0 && t.isRepeatingTransaction()) { 
-	        	    recurringExpenses += Math.abs(t.getAmount());
-	        	}
-	        }
-	    }
-	    return recurringExpenses;
-	}
-
-	@Override
 	public Transaction createTransactionForCurrentUser(int categoryId, Timestamp transactionDate, BigDecimal amount,
 			String note, boolean repeatingTransaction) {
 
@@ -258,27 +263,28 @@ public class SystemFacade implements SystemFacadeLocal {
         return createdTransaction;
 	}
 
-	@Override
-	public void updateTransaction(int transactionId, int newCategoryId, double newAmount) {
-        Transaction transaction = transactionEAO.findById(transactionId);
-        Category category = categoryEAO.findById(newCategoryId);
+    @Override
+    public Transaction createTransactionForAccount(int accountId, int categoryId, Timestamp transactionDate,
+            BigDecimal amount, String note, boolean repeatingTransaction) {
 
-        if (transaction == null || category == null || transaction.getAccount() == null) {
-            return;
+        Account account = accountEAO.findAccount(accountId);
+        Category category = categoryEAO.findCategory(categoryId);
+
+        if (account == null || category == null || amount == null) {
+            return null;
         }
 
-        Account account = transaction.getAccount();
-        BigDecimal oldAmount = BigDecimal.valueOf(transaction.getAmount());
-        BigDecimal updatedAmount = normalizeAmountForCategory(category, BigDecimal.valueOf(newAmount));
+        BigDecimal normalizedAmount = normalizeAmountForCategory(category, amount);
 
-        transaction.setCategory(category);
-        transaction.setAmount(updatedAmount.doubleValue());
-        transactionEAO.updateTransaction(transaction);
+        Transaction transaction = new Transaction(account, category, transactionDate, normalizedAmount.doubleValue(), note,
+                repeatingTransaction);
+        Transaction createdTransaction = transactionEAO.createTransaction(transaction);
 
-        BigDecimal difference = updatedAmount.subtract(oldAmount);
-        account.setCurrentBalance(account.getCurrentBalance().add(difference));
+        account.setCurrentBalance(account.getCurrentBalance().add(normalizedAmount));
         accountEAO.updateAccount(account);
-	}
+
+        return createdTransaction;
+    }
 
     private BigDecimal normalizeAmountForCategory(Category category, BigDecimal amount) {
         BigDecimal absoluteAmount = amount.abs();
