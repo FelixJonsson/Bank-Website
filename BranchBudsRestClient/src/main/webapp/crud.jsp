@@ -5,15 +5,18 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<link rel="stylesheet" type="text/css" href="css/transaction.css?v=20260520b">
+<link rel="stylesheet" type="text/css" href="css/transaction.css?v=20260520d">
 <script src="js/transaction.js?v=20260520b"></script>
 <meta charset="UTF-8">
 <title>BranchBuds Rest Client</title>
 </head>
 <body>
 <header>
-<p>BranchBuds Rest Client</p>
+	<img src="images/branchbuds-rest-logo.png"
+		alt="BranchBuds REST Client"
+		class="rest-client-logo">
 </header>
+
 <section id="row">
 <aside>
 <fieldset id="AccountFS">

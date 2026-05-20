@@ -64,15 +64,16 @@ box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 legend {
-padding: 4px 10px;
-font-weight: 600;
-font-size: 18px;
-color: #1f2933;
-background: #ffffff;
-border: 1px solid #d8dee4;
-border-radius: 999px;
-margin-left: 8px;
+	padding: 4px 10px;
+	font-weight: 600;
+	font-size: 18px;
+	color: #c9682f;
+	background: #ffffff;
+	border: 1px solid #e3a06f;
+	border-radius: 999px;
+	margin-left: 8px;
 }
+
 
 label {
 display: block;
@@ -123,24 +124,29 @@ min-height: 18px;
 }
 
 input[type="button"] {
-padding: 10px 14px;
-border: 1px solid #111111;
-background: #111111;
-color: #ffffff;
-cursor: pointer;
-border-radius: 6px;
-font-weight: 600;
-font: inherit;
+	padding: 10px 14px;
+	border: 1px solid #1f5f8b;
+	background: #1f5f8b;
+	color: #ffffff;
+	cursor: pointer;
+	border-radius: 6px;
+	font-weight: 600;
+	font: inherit;
 }
+
 
 input[type="button"]:hover {
-background: #2a2a2a;
+	background: #17496b;
+	border-color: #17496b;
 }
 
+
 input[type="button"]:disabled {
-opacity: 0.45;
-cursor: default;
-background: #111111;
+	opacity: 0.65;
+	cursor: default;
+	background: #1f5f8b;
+	border-color: #1f5f8b;
+	color: #ffffff;
 }
 
 #accountInfo {
@@ -169,10 +175,11 @@ vertical-align: top;
 }
 
 th {
-font-size: 13px;
-font-weight: 700;
-color: #52606d;
+	font-size: 14px;
+	font-weight: 700;
+	color: #52606d;
 }
+
 
 #transactionsTableBody tr {
 cursor: pointer;
@@ -187,7 +194,7 @@ background: #d8edf5;
 }
 
 #statusLabel {
-font-size: 13px;
+font-size: 14px;
 margin-top: 16px;
 padding: 10px 12px;
 border-radius: 6px;
@@ -232,4 +239,16 @@ margin-top: 20px;
 display: grid;
 grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+
 }
+
+.rest-client-logo {
+	display: block;
+	width: 280px;
+	height: auto;
+}
+
+
+
+
+
