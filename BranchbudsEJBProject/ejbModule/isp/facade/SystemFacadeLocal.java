@@ -15,30 +15,26 @@ import java.sql.Timestamp;
 @Local
 public interface SystemFacadeLocal {
 	
-	public List<Transaction> findTransactionsByAccount(Account account);
 	public List<Category> findAllCategories();
-	public Account findAccountByUser(User user);
 	public Account findAccount(int accountId);
-	public Account findAccountByName(String accountName);
 	public List<Account> findAllAccounts();
-	public User findUser(int userId);
-	public Account findAccountForUser(int userId);
-	public List<Transaction> findTransactionsForUser(int userId);
 	public List<Transaction> findTransactionsForAccountId(int accountId);
-	public List<Transaction> findTransactionsForAccountName(String accountName);
+	public Transaction findTransactionById(int transactionId);
 	public User findCurrentUser();
 	public Account findCurrentUserAccount();
 	public List<Transaction> findTransactionsForCurrentUser();
+	public Transaction createTransactionForAccount(int accountId, int categoryId, Timestamp transactionDate,
+	        BigDecimal amount, String note, boolean repeatingTransaction);
 	public Transaction createTransactionForCurrentUser(int categoryId, Timestamp transactionDate,
 	        BigDecimal amount, String note, boolean repeatingTransaction);
+	public void deleteTransactionById(int transactionId);
 	public void deleteTransactionForCurrentUser(int transactionId);
+	public Transaction updateTransactionById(int transactionId, int categoryId, Timestamp transactionDate,
+	        BigDecimal amount, String note, boolean repeatingTransaction);
 	public Transaction updateTransactionForCurrentUser(int transactionId, int categoryId,
 	        Timestamp transactionDate, BigDecimal amount, String note, boolean repeatingTransaction);
 	public Transaction findTransactionForCurrentUser(int transactionId);
 	public List<User> getAllUsers();
-	public void updateTransaction(int transactionId, int newCategoryId, double newAmount);
 	public double calculateTotalIncome(int accountId);
 	public double calculateTotalExpenses(int accountId);
-	public double calculateRecurringExpenses(int accountId);
-
 }
