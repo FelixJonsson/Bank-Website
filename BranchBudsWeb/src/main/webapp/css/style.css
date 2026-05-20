@@ -137,19 +137,6 @@ a:hover {
     margin: 0;
 }
 
-
-.section-heading {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: 16px;
-	margin-bottom: 16px;
-}
-
-.section-heading h2 {
-	margin: 0;
-}
-
 .overview-list {
 	display: grid;
 	grid-template-columns: 1fr;
@@ -613,4 +600,3 @@ footer {
 	color: #52606d;
 	line-height: 1.7;
 }
-
