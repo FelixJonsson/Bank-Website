@@ -120,54 +120,56 @@
 					<p class="status-message error">Could not delete transaction.</p>
 				</c:if>
 
-				<table>
-					<tr>
-						<th>Date</th>
-						<th>Category</th>
-						<th>Amount</th>
-						<th>Repeating</th>
-						<th>Comment</th>
-						<th>Action</th>
-					</tr>
-
-					<c:forEach var="transaction" items="${transactions}">
+				<div class="transactions-table-wrap">
+					<table>
 						<tr>
-							<td>${fn:substring(transaction.transactionDate, 0, 10)}</td>
-							<td>${transaction.category.categoryName}</td>
-							<td class="amount"><fmt:formatNumber value="${transaction.amount}" maxFractionDigits="0"/> kr</td>
-							<td><c:choose>
-									<c:when test="${transaction.repeatingTransaction}">
-        			 			   Yes
-     				   			</c:when>
-									<c:otherwise>
-    			       				No
-     						   	</c:otherwise>
-								</c:choose></td>
-							<td>${transaction.note}</td>
-
-							<td class="actions">
-							    <button type="button"
-							        class="action-button btn-primary edit-transaction-button"
-							        data-transaction-id="${transaction.transactionId}"
-							        data-category-id="${transaction.category.categoryId}"
-							        data-category-name="${transaction.category.categoryName}"
-							        data-transaction-date="${fn:substring(transaction.transactionDate, 0, 10)}"
-							        data-amount="${transaction.amount}"
-							        data-note="${transaction.note}"
-							        data-repeating-transaction="${transaction.repeatingTransaction}">Edit</button>
-							        
-							    <form class="inline-form"
-							        action="${pageContext.request.contextPath}/MainViewServlet"
-							        method="post"
-							        onsubmit="return confirm('Delete this transaction?');">
-							        <input type="hidden" name="action" value="deleteTransaction">
-							        <input type="hidden" name="transactionId" value="${transaction.transactionId}">
-							        <button type="submit" class="action-button btn-destructive">Delete</button>
-							    </form>
-							</td>
+							<th>Date</th>
+							<th>Category</th>
+							<th>Amount</th>
+							<th>Repeating</th>
+							<th>Comment</th>
+							<th>Action</th>
 						</tr>
-					</c:forEach>
-				</table>
+
+						<c:forEach var="transaction" items="${transactions}">
+							<tr>
+								<td>${fn:substring(transaction.transactionDate, 0, 10)}</td>
+								<td>${transaction.category.categoryName}</td>
+								<td class="amount"><fmt:formatNumber value="${transaction.amount}" maxFractionDigits="0"/> kr</td>
+								<td><c:choose>
+										<c:when test="${transaction.repeatingTransaction}">
+	        			 			   Yes
+	     				   			</c:when>
+										<c:otherwise>
+	    			       				No
+	     						   	</c:otherwise>
+									</c:choose></td>
+								<td>${transaction.note}</td>
+
+								<td class="actions">
+								    <button type="button"
+								        class="action-button btn-primary edit-transaction-button"
+								        data-transaction-id="${transaction.transactionId}"
+								        data-category-id="${transaction.category.categoryId}"
+								        data-category-name="${transaction.category.categoryName}"
+								        data-transaction-date="${fn:substring(transaction.transactionDate, 0, 10)}"
+								        data-amount="${transaction.amount}"
+								        data-note="${transaction.note}"
+								        data-repeating-transaction="${transaction.repeatingTransaction}">Edit</button>
+								        
+								    <form class="inline-form"
+								        action="${pageContext.request.contextPath}/MainViewServlet"
+								        method="post"
+								        onsubmit="return confirm('Delete this transaction?');">
+								        <input type="hidden" name="action" value="deleteTransaction">
+								        <input type="hidden" name="transactionId" value="${transaction.transactionId}">
+								        <button type="submit" class="action-button btn-destructive">Delete</button>
+								    </form>
+								</td>
+							</tr>
+						</c:forEach>
+					</table>
+				</div>
 
 				<c:if test="${empty transactions}">
 					<p class="empty-state">No transactions were found for the
