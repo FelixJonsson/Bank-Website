@@ -67,31 +67,31 @@
 				</c:choose>
 			</section>
 
-<section class="panel">
-	<h2>${spendingChartHeading}</h2>
-
-	<c:choose>
-		<c:when test="${empty spendingByCategory}">
-			<p class="empty-state">No expenses found.</p>
-		</c:when>
-		<c:otherwise>
-			<div class="expense-list">
-				<c:forEach var="entry" items="${spendingByCategory}">
-					<div class="expense-item">
-						<div class="expense-item-label">${entry.key}</div>
-						<div class="expense-item-row">
-							<div class="expense-track">
-								<div class="expense-fill"
-									style="width: ${(entry.value / chartMax) * 100}%;"></div>
-							</div>
-							<div class="expense-item-value"><fmt:formatNumber value="${entry.value}" maxFractionDigits="0"/> kr</div>
+			<section class="panel">
+				<h2>${spendingChartHeading}</h2>
+			
+				<c:choose>
+					<c:when test="${empty spendingByCategory}">
+						<p class="empty-state">No expenses found.</p>
+					</c:when>
+					<c:otherwise>
+						<div class="expense-list">
+							<c:forEach var="entry" items="${spendingByCategory}">
+								<div class="expense-item">
+									<div class="expense-item-label">${entry.key}</div>
+									<div class="expense-item-row">
+										<div class="expense-track">
+											<div class="expense-fill"
+												style="width: ${(entry.value / chartMax) * 100}%;"></div>
+										</div>
+										<div class="expense-item-value"><fmt:formatNumber value="${entry.value}" maxFractionDigits="0"/> kr</div>
+									</div>
+								</div>
+							</c:forEach>
 						</div>
-					</div>
-				</c:forEach>
-			</div>
-		</c:otherwise>
-	</c:choose>
-</section>
+					</c:otherwise>
+				</c:choose>
+			</section>
 
 
 			<section class="panel panel-wide">
@@ -326,6 +326,15 @@
 							$("#closeAddModalButton").on("click", function() {
 								addModal.removeClass("is-open").attr("aria-hidden", "true");
 							});
+							
+							$("form").on("submit", function(event) {
+						        const noteValue = $(this).find("textarea[name='note']").val();
+						        
+						        if (noteValue && /[åäöÅÄÖ]/.test(noteValue)) {
+						            alert("Please use standard English characters. å, ä, and ö are not allowed in the comment.");
+						            event.preventDefault(); 
+						        }
+						    });
 
 							$(".edit-transaction-button").on(
 									"click",
