@@ -186,34 +186,28 @@ function ajaxAddReturnSuccess(result) {
     if (result && result.transactionId) {
         selectedTransactionId = "";
     }
-    setFormStatus("Transaction added");
     refreshAfterWrite("Transaction added");
 }
 
 function ajaxAddReturnError(xhr, status) {
-    setFormStatus("Could not add transaction");
     setStatus("Could not add transaction (" + getErrorCode(xhr, status) + ")", "error");
 }
 
 function ajaxUpdateReturnSuccess() {
     clearTransactionForm();
-    setFormStatus("Transaction updated");
     refreshAfterWrite("Transaction updated");
 }
 
 function ajaxUpdateReturnError(xhr, status) {
-    setFormStatus("Could not update transaction");
     setStatus("Could not update transaction (" + getErrorCode(xhr, status) + ")", "error");
 }
 
 function ajaxDeleteReturnSuccess() {
     clearTransactionForm();
-    setFormStatus("Transaction deleted");
     refreshAfterWrite("Transaction deleted");
 }
 
 function ajaxDeleteReturnError(xhr, status) {
-    setFormStatus("Could not delete transaction");
     setStatus("Could not delete transaction (" + getErrorCode(xhr, status) + ")", "error");
 }
 
@@ -332,7 +326,6 @@ function clearTransactionForm() {
     $("#repeatingTransaction").prop("checked", false);
     originalTransactionSnapshot = null;
     $("#transactionsTableBody tr").removeClass("is-selected");
-    setFormStatus("");
     updateActionStates();
 }
 
@@ -388,10 +381,6 @@ function updateActionStates() {
     var hasSelection = selectedTransactionId !== "";
     $("#DeleteBtn").prop("disabled", !hasSelection);
     $("#UpdateBtn").prop("disabled", !hasSelection || !hasTransactionChanged());
-}
-
-function setFormStatus(message) {
-    $("#formStatusLabel").text(message || "");
 }
 
 function setStatus(message, type) {
