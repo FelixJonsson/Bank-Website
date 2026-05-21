@@ -116,13 +116,6 @@ flex-wrap: wrap;
 gap: 8px;
 }
 
-.form-status {
-margin: 12px 0 0;
-font-size: 13px;
-color: #52606d;
-min-height: 18px;
-}
-
 input[type="button"] {
 	padding: 10px 14px;
 	border: 1px solid #1f5f8b;
@@ -247,7 +240,6 @@ grid-template-columns: repeat(2, minmax(0, 1fr));
 	width: 280px;
 	height: auto;
 }
-
 
 
 

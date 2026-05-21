@@ -62,9 +62,9 @@ Repeating transaction
 <input type="button" value="Delete" id="DeleteBtn">
 <input type="button" value="Clear" id="ClearBtn">
 </div>
-<p id="formStatusLabel" class="form-status"></p>
 </fieldset>
 </article>
+<p id="statusLabel"></p>
 <article>
 <fieldset id="ListFS">
 <legend>Transactions for selected account</legend>
@@ -86,7 +86,6 @@ Repeating transaction
 </table>
 </fieldset>
 </article>
-<p id="statusLabel"></p>
 </section>
 </section>
 </section>

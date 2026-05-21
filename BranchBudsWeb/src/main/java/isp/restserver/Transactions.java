@@ -98,28 +98,14 @@ public class Transactions extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	
-    	String dateString = request.getParameter("transactionDate");
-    	
-    	try {
-            LocalDate transactionDate = LocalDate.parse(dateString);
-            LocalDate today = LocalDate.now();
-            if (transactionDate.isAfter(today)) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().write("{\"error\": \"Du kan inte lägga till transaktioner i framtiden.\"}");
-                return; 
-            }
-
-
-        } catch (Exception e) {
-        }
-
         String pathInfo = request.getPathInfo();
         if (pathInfo == null || pathInfo.equals("/")) {
             BufferedReader reader = request.getReader();
             TransactionPayload payload = parseJsonTransaction(reader);
+            if (isFutureDate(payload.transactionDate)) {
+                sendValidationError(response, "You cannot add transactions in the future.");
+                return;
+            }
             Transaction transaction = facade.createTransactionForAccount(
                 payload.accountId,
                 payload.categoryId,
@@ -155,6 +141,10 @@ public class Transactions extends HttpServlet {
             String id = splits[1];
             BufferedReader reader = request.getReader();
             TransactionPayload payload = parseJsonTransaction(reader);
+            if (isFutureDate(payload.transactionDate)) {
+                sendValidationError(response, "You cannot update transactions to a future date.");
+                return;
+            }
             Transaction transaction = facade.updateTransactionById(
                 Integer.parseInt(id),
                 payload.categoryId,
@@ -261,6 +251,23 @@ public class Transactions extends HttpServlet {
 
     private Timestamp parseTimestamp(String value) {
         return Timestamp.valueOf(LocalDateTime.parse(value));
+    }
+
+    private boolean isFutureDate(Timestamp transactionDate) {
+        if (transactionDate == null) {
+            return false;
+        }
+
+        LocalDate date = transactionDate.toLocalDateTime().toLocalDate();
+        return date.isAfter(LocalDate.now());
+    }
+
+    private void sendValidationError(HttpServletResponse response, String message)
+            throws IOException {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("{\"error\": \"" + message + "\"}");
     }
 
     private static class TransactionPayload {
