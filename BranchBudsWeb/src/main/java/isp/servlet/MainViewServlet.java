@@ -122,101 +122,76 @@ public class MainViewServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	        throws ServletException, IOException {
 
-		String action = request.getParameter("action");
+	    request.setCharacterEncoding("UTF-8");
+	    String action = request.getParameter("action");
 
-		if ("addTransaction".equals(action)) {
-		    String dateString = request.getParameter("transactionDate");
-		    LocalDate transactionDate;
+	    if (action == null) {
+	        response.sendRedirect(request.getContextPath() + "/MainViewServlet");
+	        return;
+	    }
 
-		    try {
-		        transactionDate = LocalDate.parse(dateString);
-		        LocalDate today = LocalDate.now();
+	    try {
+	        switch (action) {
+	            case "addTransaction":
+	            case "updateTransaction":
+	                String dateString = request.getParameter("transactionDate");
+	                LocalDate localDate = LocalDate.parse(dateString);
+	                
+	                if (localDate.isAfter(LocalDate.now())) {
+	                    request.setAttribute("status", "dateError");
+	                    request.setAttribute("errorMessage", "You cannot set a future date for a transaction.");
+	                    request.getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
+	                    return;
+	                }
 
-		        if (transactionDate.isAfter(today)) {
-		            request.setAttribute("status", "dateError"); 
-		            request.setAttribute("errorMessage", "Du kan inte lägga till transaktioner i framtiden.");
-		            request.getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
-		            return; 
-		        }
+	                int categoryId = Integer.parseInt(request.getParameter("categoryId"));
+	                BigDecimal amount = new BigDecimal(request.getParameter("amount"));
+	                String note = request.getParameter("note");
+	                boolean repeating = request.getParameter("repeatingTransaction") != null;
+	                
+	                Timestamp transactionDate = Timestamp.valueOf(localDate.atStartOfDay());
+	                
+	                if (note != null && note.matches(".*[åäöÅÄÖ].*")) {
+	                    request.setAttribute("status", "invalidCharError");
+	                    request.setAttribute("errorMessage", "Please use standard English characters. å, ä, and ö are not allowed.");
+	                    request.getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
+	                    return; 
+	                }
 
-		    } catch (DateTimeParseException e) {
-		    }
-		}
-		
-		if (action == null) {
-			response.sendRedirect(request.getContextPath() + "/MainViewServlet");
-			return;
-		}
+	                if ("addTransaction".equals(action)) {
+	                    Transaction created = systemFacade.createTransactionForCurrentUser(
+	                            categoryId, transactionDate, amount, note, repeating);
+	                    
+	                    response.sendRedirect(request.getContextPath() + "/MainViewServlet?status=" + 
+	                            (created != null ? "added" : "addError"));
+	                } else {
+	                    int transactionId = Integer.parseInt(request.getParameter("transactionId"));
+	                    Transaction updated = systemFacade.updateTransactionForCurrentUser(
+	                            transactionId, categoryId, transactionDate, amount, note, repeating);
+	                    
+	                    response.sendRedirect(request.getContextPath() + "/MainViewServlet?status=" + 
+	                            (updated != null ? "updated" : "updateError"));
+	                }
+	                break;
 
-		try {
-			if ("addTransaction".equals(action)) {
-				int categoryId = Integer.parseInt(request.getParameter("categoryId"));
-				String transactionDateValue = request.getParameter("transactionDate");
-				BigDecimal amount = new BigDecimal(request.getParameter("amount"));
-				String note = request.getParameter("note");
-				boolean repeatingTransaction = request.getParameter("repeatingTransaction") != null;
-				Timestamp transactionDate = Timestamp.valueOf(transactionDateValue + " 00:00:00");
+	            case "deleteTransaction":
+	                int deleteId = Integer.parseInt(request.getParameter("transactionId"));
+	                systemFacade.deleteTransactionForCurrentUser(deleteId);
+	                response.sendRedirect(request.getContextPath() + "/MainViewServlet?status=deleted");
+	                break;
 
-				Transaction createdTransaction = systemFacade.createTransactionForCurrentUser(categoryId,
-						transactionDate, amount, note, repeatingTransaction);
+	            default:
+	                response.sendRedirect(request.getContextPath() + "/MainViewServlet");
+	                break;
+	        }
 
-				if (createdTransaction == null) {
-					response.sendRedirect(request.getContextPath() + "/MainViewServlet?status=addError");
-					return;
-				}
-
-				response.sendRedirect(request.getContextPath() + "/MainViewServlet?status=added");
-				return;
-			}
-
-			if ("updateTransaction".equals(action)) {
-				int transactionId = Integer.parseInt(request.getParameter("transactionId"));
-				int categoryId = Integer.parseInt(request.getParameter("categoryId"));
-				String transactionDateValue = request.getParameter("transactionDate");
-				BigDecimal amount = new BigDecimal(request.getParameter("amount"));
-				String note = request.getParameter("note");
-				boolean repeatingTransaction = request.getParameter("repeatingTransaction") != null;
-				Timestamp transactionDate = Timestamp.valueOf(transactionDateValue + " 00:00:00");
-
-				Transaction updatedTransaction = systemFacade.updateTransactionForCurrentUser(transactionId,
-						categoryId, transactionDate, amount, note, repeatingTransaction);
-
-				if (updatedTransaction == null) {
-					response.sendRedirect(request.getContextPath() + "/MainViewServlet?status=updateError");
-					return;
-				}
-
-				response.sendRedirect(request.getContextPath() + "/MainViewServlet?status=updated");
-				return;
-			}
-
-			if ("deleteTransaction".equals(action)) {
-				int transactionId = Integer.parseInt(request.getParameter("transactionId"));
-				Transaction transaction = systemFacade.findTransactionForCurrentUser(transactionId);
-
-				if (transaction == null) {
-					response.sendRedirect(request.getContextPath() + "/MainViewServlet?status=deleteError");
-					return;
-				}
-
-				systemFacade.deleteTransactionForCurrentUser(transactionId);
-				response.sendRedirect(request.getContextPath() + "/MainViewServlet?status=deleted");
-				return;
-			}
-
-			response.sendRedirect(request.getContextPath() + "/MainViewServlet");
-		} catch (IllegalArgumentException e) {
-			String status = "addError";
-
-			if ("updateTransaction".equals(action)) {
-				status = "updateError";
-			} else if ("deleteTransaction".equals(action)) {
-				status = "deleteError";
-			}
-
-			response.sendRedirect(request.getContextPath() + "/MainViewServlet?status=" + status);
-		}
-	}
-}
+	    } catch (DateTimeParseException e) {
+	        response.sendRedirect(request.getContextPath() + "/MainViewServlet?status=" + 
+	                (action.equals("addTransaction") ? "addError" : "updateError"));
+	    } catch (IllegalArgumentException e) {
+	        response.sendRedirect(request.getContextPath() + "/MainViewServlet?status=" + 
+	                action.replace("Transaction", "Error")); 
+	    }
+	}}
