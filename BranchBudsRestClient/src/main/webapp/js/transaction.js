@@ -98,13 +98,14 @@ document.addEventListener("DOMContentLoaded", function() {
 			        }
 });
 
-function loadAccounts(preferredAccountId) {
+function loadAccounts(preferredAccountId, options) {
+    var requestOptions = options || {};
     $.ajax({
         method: "GET",
         url: buildApiUrl("/Accounts/"),
         error: ajaxAccountsReturnError,
         success: function(result) {
-            ajaxAccountsReturnSuccess(result, preferredAccountId);
+            ajaxAccountsReturnSuccess(result, preferredAccountId, requestOptions);
         }
     });
 }
@@ -118,16 +119,20 @@ function loadCategories() {
     });
 }
 
-function loadTransactionsForAccount(accountId) {
+function loadTransactionsForAccount(accountId, options) {
+    var requestOptions = options || {};
     $.ajax({
         method: "GET",
         url: buildApiUrl("/Transactions/account/" + encodeURIComponent(accountId)),
         error: ajaxTransactionsReturnError,
-        success: ajaxTransactionsReturnSuccess
+        success: function(result) {
+            ajaxTransactionsReturnSuccess(result, requestOptions);
+        }
     });
 }
 
-function ajaxAccountsReturnSuccess(result, preferredAccountId) {
+function ajaxAccountsReturnSuccess(result, preferredAccountId, options) {
+    var requestOptions = options || {};
     accountsCache = result || [];
     renderAccounts(accountsCache, preferredAccountId);
 
@@ -149,7 +154,7 @@ function ajaxAccountsReturnSuccess(result, preferredAccountId) {
     syncSelectedAccount();
 
     if (selectedAccountId !== "") {
-        loadTransactionsForAccount(selectedAccountId);
+        loadTransactionsForAccount(selectedAccountId, requestOptions);
     }
 }
 
@@ -171,9 +176,12 @@ function ajaxCategoriesReturnError(xhr, status) {
     setStatus("Could not load categories (" + getErrorCode(xhr, status) + ")", "error");
 }
 
-function ajaxTransactionsReturnSuccess(result) {
+function ajaxTransactionsReturnSuccess(result, options) {
+    var requestOptions = options || {};
     renderTransactions(result || []);
-    setStatus("Transactions loaded", "success");
+    if (!requestOptions.preserveStatus) {
+        setStatus("Transactions loaded", "success");
+    }
 }
 
 function ajaxTransactionsReturnError(xhr, status) {
@@ -213,7 +221,7 @@ function ajaxDeleteReturnError(xhr, status) {
 
 function refreshAfterWrite(message) {
     var currentAccountId = selectedAccountId;
-    loadAccounts(currentAccountId);
+    loadAccounts(currentAccountId, { preserveStatus: true });
     setStatus(message, "success");
 }
 
